@@ -22,7 +22,6 @@ export default function SideMenus({
   isMinimized = false,
   onToggleMinimize,
   onLogout,
-  // BdCode prop for analysis menu logic
   bdCodeProp, 
 }) {
   const bdCode = bdCodeProp;
@@ -34,7 +33,6 @@ export default function SideMenus({
     { key: "regisDate", label: "Registration", icon: MdAppRegistration },
   ];
 
-  // Analysis menus logic
   const analysisMenus = [
     bdCode && { key: "bdProjection", label: "BD Projection", icon: MdTrendingUp },
     !bdCode && { key: "bdPerformanceAnalysis", label: "BD Performance", icon: IoAnalytics },
@@ -45,32 +43,88 @@ export default function SideMenus({
   ].filter(Boolean);
 
   const renderMenuItem = (menu) => (
-    // 'group relative' is essential here for the tooltip to work
-    <li key={menu.key} className={isMinimized ? "group relative" : ""}> 
-      <button
+    <li key={menu.key} className="group relative"> 
+      <motion.button
         onClick={() => onViewChange(menu.key)}
-        className={`relative flex items-center w-full p-3 rounded-xl transition-all duration-300 ease-in-out ${
-          isMinimized ? "justify-center" : "transform hover:scale-[1.02]"
-        } hover:bg-white/15 ${
+        whileHover={{ scale: 1.02, x: 2 }}
+        whileTap={{ scale: 0.97 }}
+        className={`relative flex items-center w-full px-2.5 py-2.5 my-2 rounded-lg transition-all duration-300 ${
+          isMinimized ? "justify-center" : ""
+        } ${
           activeView === menu.key
-            ? "bg-white/25 backdrop-blur-sm shadow-inner font-semibold"
-            : "hover:bg-white/10"
+            ? "bg-gradient-to-r from-white/25 to-white/20 shadow-lg font-semibold backdrop-blur-sm ring-2 ring-white/30"
+            : "hover:bg-white/10 h;"
         }`}
       >
-        <menu.icon className="w-5 h-5" />
-        <span className={`text-sm ${isMinimized ? "hidden" : "ml-3"}`}>
-          {menu.label}
-        </span>
-
-        {isMinimized && (
-          <span 
-            // FIX: Added 'top-1/2' and '-translate-y-1/2' for perfect vertical centering.
-            className="absolute top-1/2 -translate-y-1/2 left-full ml-4 p-2 min-w-max bg-gray-800/95 text-white text-xs font-medium rounded-lg opacity-0 transition-opacity duration-300 group-hover:opacity-100 pointer-events-none z-50"
+        <motion.div
+          animate={activeView === menu.key ? { rotate: [0, -10, 10, 0] } : {}}
+          transition={{ duration: 0.5 }}
+        >
+          <menu.icon 
+            className={`w-4 h-4 transition-all duration-300 ${
+              activeView === menu.key ? "text-white drop-shadow-lg" : ""
+            } group-hover:scale-125 group-hover:rotate-12`} 
+          />
+        </motion.div>
+        
+        {!isMinimized && (
+          <motion.span 
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="text-sm ml-2.5 font-medium"
           >
             {menu.label}
-          </span>
+          </motion.span>
         )}
-      </button>
+
+        {isMinimized && (
+          <div 
+            className="absolute left-full ml-5 px-4 py-2.5 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white text-sm font-bold rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-out pointer-events-none z-[60] whitespace-nowrap shadow-2xl border border-cyan-400/30 backdrop-blur-xl group-hover:scale-105 group-hover:ml-6"
+            style={{
+              top: '50%',
+              transform: 'translateY(-50%)',
+            }}
+          >
+            {/* Glowing background effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-600/30 via-cyan-600/30 to-blue-600/30 rounded-xl blur-md -z-10"></div>
+            
+            {/* Content with gradient text */}
+            <span className="relative z-10 bg-gradient-to-r from-cyan-200 via-blue-200 to-cyan-200 bg-clip-text text-transparent">
+              {menu.label}
+            </span>
+            
+            {/* Animated arrow */}
+            <motion.span 
+              initial={{ x: -2, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ delay: 0.1 }}
+              className="absolute right-full mr-1 top-1/2 -translate-y-1/2"
+            >
+              <svg width="12" height="12" viewBox="0 0 12 12" className="drop-shadow-lg">
+                <path 
+                  d="M0 6 L12 0 L12 12 Z" 
+                  fill="url(#arrowGradient)"
+                  className="drop-shadow-xl"
+                />
+                <defs>
+                  <linearGradient id="arrowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#1f2937" />
+                    <stop offset="100%" stopColor="#111827" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </motion.span>
+
+            {/* Shimmer effect */}
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent rounded-xl"
+              initial={{ x: '-100%' }}
+              animate={{ x: '100%' }}
+              transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 0.5 }}
+            />
+          </div>
+        )}
+      </motion.button>
     </li>
   );
 
@@ -79,87 +133,168 @@ export default function SideMenus({
   return (
     <>
       {/* Sidebar */}
-      <div
-        className={`fixed top-0 left-0 bg-gradient-to-b from-blue-600 to-cyan-600 opacity-95 text-white ${
-          isMinimized ? "w-25" : "w-56"
-        } min-h-screen h-full overflow-y-auto p-6 flex flex-col space-y-8 shadow-2xl transition-all duration-300 z-50 custom-scrollbar`}
+      <motion.div
+        initial={{ x: -100, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        className={`fixed top-0 left-0 bg-gradient-to-br from-blue-600 via-blue-500 to-cyan-600 text-white ${
+          isMinimized ? "w-16" : "w-52"
+        } h-screen overflow-y-auto px-3 py-4 flex flex-col shadow-2xl transition-all duration-300 z-50 custom-scrollbar`}
       >
+        {/* Animated gradient overlay */}
+        <motion.div
+          className="absolute inset-0 bg-gradient-to-br from-cyan-400/10 via-transparent to-blue-400/10 pointer-events-none"
+          animate={{
+            backgroundPosition: ['0% 0%', '100% 100%'],
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+            repeatType: 'reverse',
+          }}
+          style={{
+            backgroundSize: '200% 200%',
+          }}
+        />
+
         {/* Header */}
-        <div
-          className={`flex ${
-            isMinimized ? "justify-center" : "justify-between"
-          } items-center`}
-        >
+        <div className="mb-6 relative z-10">
+          <div className={`flex ${isMinimized ? "justify-center" : "justify-between"} items-center mb-4`}>
+            {!isMinimized && (
+              <motion.h2 
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="text-lg font-extrabold tracking-tight bg-gradient-to-r from-white via-cyan-100 to-white bg-clip-text text-transparent drop-shadow-lg"
+              >
+                LIMS Dashboard
+              </motion.h2>
+            )}
+            <motion.button
+              onClick={onToggleMinimize}
+              whileHover={{ scale: 1.15, rotate: 180 }}
+              whileTap={{ scale: 0.9 }}
+              className="p-2 rounded-xl bg-white/10 hover:bg-white/20 transition-all duration-300 backdrop-blur-sm border border-white/20 shadow-lg hover:shadow-xl"
+            >
+              <ToggleIcon className="w-4 h-4" />
+            </motion.button>
+          </div>
+          
           {!isMinimized && (
-            <h2 className="text-xl font-extrabold tracking-wide">
-              LIMS DASHBOARD
-            </h2>
+            <motion.div 
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              className="h-px bg-gradient-to-r from-transparent via-white/40 to-transparent"
+            ></motion.div>
           )}
-          <button
-            onClick={onToggleMinimize}
-            className={`p-1 rounded-lg hover:bg-white/20 transition-colors ${
-              isMinimized ? "" : "ml-auto"
-            }`}
-          >
-            <ToggleIcon className="w-6 h-6" />
-          </button>
         </div>
 
         {/* Menus */}
-        <nav className="flex-1 space-y-8">
+        <nav className="flex-1 space-y-6 relative z-10">
           <div>
             {!isMinimized && (
-              <h3 className="text-xs font-semibold uppercase text-cyan-200 mb-3 tracking-wider">
+              <motion.h3 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-[10px] font-extrabold uppercase text-cyan-100 mb-2 tracking-widest px-1 drop-shadow-md"
+              >
                 Searching
-              </h3>
+              </motion.h3>
             )}
-            <ul className="space-y-3">{searchingMenus.map(renderMenuItem)}</ul>
+            <ul className="space-y-1">{searchingMenus.map(renderMenuItem)}</ul>
           </div>
 
           <div>
-            {!isMinimized && (
-              <h3 className="text-xs font-semibold uppercase text-cyan-200 mb-3 tracking-wider">
+            {!isMinimized ? (
+              <motion.h3 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-[10px] font-extrabold uppercase text-cyan-100 mb-2 tracking-widest px-1 drop-shadow-md"
+              >
                 Analysis
-              </h3>
+              </motion.h3>
+            ) : (
+              <div className="h-px bg-gradient-to-r from-transparent via-white/30 to-transparent my-3"></div>
             )}
-            <ul className="space-y-3">{analysisMenus.map(renderMenuItem)}</ul>
+            <ul className="space-y-1">{analysisMenus.map(renderMenuItem)}</ul>
           </div>
         </nav>
 
         {/* Logout Button */}
-        <div className="mt-auto border-t border-white/20 pt-4">
+        <div className="mt-auto pt-3 border-t border-white/20 relative z-10">
           <motion.button
-            // FIX: Added 'group relative' class for tooltip and ensured 'justify-center' when minimized
-            className={isMinimized ? "group relative flex items-center w-full p-3 rounded-xl transition-all duration-300 justify-center hover:bg-white/15 text-white" : "flex items-center w-full p-3 rounded-xl transition-all duration-300 hover:bg-white/15 text-white"}
-            whileHover={{ scale: 1.05, rotate: -2 }}
+            className="group relative flex items-center w-full px-3 py-2.5 rounded-xl transition-all duration-300 hover:bg-white/15 text-white justify-center hover:shadow-lg backdrop-blur-sm"
+            whileHover={{ scale: 1.05, y: -2 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setShowLogoutConfirm(true)}
           >
-            <LogOut className="w-5 h-5" />
-            <span className={`text-sm ${isMinimized ? "hidden" : "ml-3"}`}>
-              Logout
-            </span>
-            {/* FIX: Added tooltip logic with vertical centering */}
-            {isMinimized && (
-              <span 
-                className="absolute top-1/2 -translate-y-1/2 left-full ml-4 p-2 min-w-max bg-gray-800/95 text-white text-xs font-medium rounded-lg opacity-0 transition-opacity duration-300 group-hover:opacity-100 pointer-events-none z-50"
+            <motion.div
+              whileHover={{ rotate: 15 }}
+            >
+              <LogOut className={`${isMinimized ? "w-5 h-5" : "w-4 h-4"} transition-all duration-300 group-hover:scale-125`} />
+            </motion.div>
+            
+            {!isMinimized && (
+              <motion.span
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="text-sm ml-2.5 font-medium"
               >
                 Logout
-              </span>
+              </motion.span>
+            )}
+            
+            {isMinimized && (
+              <div 
+                className="absolute left-full ml-5 px-4 py-2.5 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white text-sm font-bold rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 ease-out pointer-events-none z-[60] whitespace-nowrap shadow-2xl border border-red-400/30 backdrop-blur-xl group-hover:scale-105 group-hover:ml-6"
+                style={{
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-red-600/30 via-pink-600/30 to-red-600/30 rounded-xl blur-md -z-10"></div>
+                
+                <span className="relative z-10 bg-gradient-to-r from-red-200 via-pink-200 to-red-200 bg-clip-text text-transparent">
+                  Logout
+                </span>
+                
+                <motion.span 
+                  initial={{ x: -2, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.1 }}
+                  className="absolute right-full mr-1 top-1/2 -translate-y-1/2"
+                >
+                  <svg width="12" height="12" viewBox="0 0 12 12">
+                    <path d="M0 6 L12 0 L12 12 Z" fill="url(#arrowGradient)" />
+                    <defs>
+                      <linearGradient id="arrowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#1f2937" />
+                        <stop offset="100%" stopColor="#111827" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                </motion.span>
+
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent rounded-xl"
+                  initial={{ x: '-100%' }}
+                  animate={{ x: '100%' }}
+                  transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 0.5 }}
+                />
+              </div>
             )}
           </motion.button>
         </div>
-      </div>
+      </motion.div>
 
-      {/* Animated Logout Confirmation Modal (Included for completeness based on context) */}
+      {/* Logout Confirmation Modal */}
       <AnimatePresence>
         {showLogoutConfirm && (
           <>
             <motion.div
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100]"
+              className="fixed inset-0 bg-black/60 backdrop-blur-md z-[100]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
+              onClick={() => setShowLogoutConfirm(false)}
             />
             <motion.div
               className="fixed inset-0 flex items-center justify-center z-[101] px-4"
@@ -167,7 +302,7 @@ export default function SideMenus({
               animate={{
                 opacity: 1,
                 scale: 1,
-                transition: { type: "spring", stiffness: 300, damping: 20 },
+                transition: { type: "spring", stiffness: 300, damping: 25 },
               }}
               exit={{
                 opacity: 0,
@@ -176,55 +311,65 @@ export default function SideMenus({
               }}
             >
               <motion.div
-                initial={{ y: 30, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={{ y: 30, opacity: 0 }}
-                transition={{ duration: 0.25 }}
-                className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl p-6 max-w-sm w-full border border-gray-100"
+                initial={{ y: 30, rotateX: -15 }}
+                animate={{ y: 0, rotateX: 0 }}
+                exit={{ y: 30, rotateX: 15 }}
+                className="bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full border border-gray-200 relative overflow-hidden"
+                onClick={(e) => e.stopPropagation()}
               >
-                <div className="flex items-center gap-3 mb-4">
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 15 }}
-                    className="p-2 bg-red-100 rounded-full"
-                  >
-                    <AlertTriangle className="w-6 h-6 text-red-600" />
-                  </motion.div>
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    Confirm Logout
-                  </h3>
-                </div>
+                {/* Gradient background effect */}
+                <div className="absolute inset-0 bg-gradient-to-br from-red-50 via-white to-pink-50 opacity-50"></div>
+                
+                <div className="relative z-10">
+                  <div className="flex items-center gap-4 mb-5">
+                    <motion.div
+                      initial={{ scale: 0, rotate: -180 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      transition={{ type: "spring", stiffness: 200, damping: 15 }}
+                      className="p-3 bg-gradient-to-br from-red-100 to-pink-100 rounded-2xl shadow-lg"
+                    >
+                      <AlertTriangle className="w-7 h-7 text-red-600" />
+                    </motion.div>
+                    <h3 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                      Confirm Logout
+                    </h3>
+                  </div>
 
-                <p className="text-gray-600 mb-6 text-sm">
-                  Are you sure you want to log out? You’ll need to sign in again
-                  to access the dashboard.
-                </p>
+                  <p className="text-gray-600 mb-8 text-sm leading-relaxed">
+                    Are you sure you want to log out? You'll need to sign in again to access the dashboard.
+                  </p>
 
-                <div className="flex justify-end gap-3">
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => setShowLogoutConfirm(false)}
-                    className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition-all text-sm font-medium"
-                  >
-                    Cancel
-                  </motion.button>
-                  <motion.button
-                    whileHover={{
-                      scale: 1.1,
-                      rotate: -2,
-                      boxShadow: "0 0 8px rgba(239, 68, 68, 0.4)",
-                    }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => {
-                      setShowLogoutConfirm(false);
-                      onLogout?.();
-                    }}
-                    className="px-4 py-2 rounded-lg bg-gradient-to-r from-red-500 to-pink-600 text-white shadow-md hover:shadow-lg transition-all text-sm font-semibold"
-                  >
-                    Logout
-                  </motion.button>
+                  <div className="flex justify-end gap-4">
+                    <motion.button
+                      whileHover={{ scale: 1.05, y: -2 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setShowLogoutConfirm(false)}
+                      className="px-6 py-2.5 rounded-xl border-2 border-gray-300 text-gray-700 hover:bg-gray-100 transition-all text-sm font-bold shadow-md hover:shadow-lg"
+                    >
+                      Cancel
+                    </motion.button>
+                    <motion.button
+                      whileHover={{
+                        scale: 1.05,
+                        y: -2,
+                        boxShadow: "0 10px 25px rgba(239, 68, 68, 0.4)",
+                      }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => {
+                        setShowLogoutConfirm(false);
+                        onLogout?.();
+                      }}
+                      className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-red-500 via-red-600 to-pink-600 text-white shadow-xl hover:shadow-2xl transition-all text-sm font-bold relative overflow-hidden"
+                    >
+                      <span className="relative z-10">Logout</span>
+                      <motion.div
+                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                        initial={{ x: '-100%' }}
+                        animate={{ x: '100%' }}
+                        transition={{ duration: 1, repeat: Infinity, repeatDelay: 0.5 }}
+                      />
+                    </motion.button>
+                  </div>
                 </div>
               </motion.div>
             </motion.div>
@@ -232,24 +377,25 @@ export default function SideMenus({
         )}
       </AnimatePresence>
 
-      {/* Blue Custom Scrollbar */}
+      {/* Custom Scrollbar Styles */}
       <style jsx global>{`
         .custom-scrollbar::-webkit-scrollbar {
-          width: 8px;
+          width: 6px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
           background: transparent;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background-color: rgba(147, 197, 253, 0.8); /* blue-300 */
+          background: linear-gradient(180deg, rgba(147, 197, 253, 0.6), rgba(96, 165, 250, 0.8));
           border-radius: 10px;
+          transition: all 0.3s ease;
         }
-        .custom-scrollbar:hover::-webkit-scrollbar-thumb {
-          background-color: rgba(96, 165, 250, 0.9); /* blue-400 */
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: linear-gradient(180deg, rgba(96, 165, 250, 0.8), rgba(59, 130, 246, 0.9));
         }
         .custom-scrollbar {
           scrollbar-width: thin;
-          scrollbar-color: rgba(147, 197, 253, 0.8) transparent;
+          scrollbar-color: rgba(147, 197, 253, 0.6) transparent;
         }
       `}</style>
     </>

@@ -3,6 +3,7 @@
     public class UpdateQuotationRequest
     {
         public string QuotNo { get; set; }
-        public string? CloseYn { get; set; }
+        public string IsLive { get; set; }
+        public string ClosingRemarks { get; set; }
     }
 }

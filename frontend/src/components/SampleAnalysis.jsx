@@ -1,10 +1,5 @@
 import React, { useState, useCallback, useMemo } from "react";
-import {
-  ClipboardList,
-  FlaskConical,
-  Search,
-  TestTube2,
-} from "lucide-react";
+import { ClipboardList, FlaskConical, Search, TestTube2 } from "lucide-react";
 
 import {
   IoSearch,
@@ -143,7 +138,6 @@ const chipColorMap = {
   gray: "bg-gray-200 text-gray-600",
 };
 
-
 const getCalculatedStatus = (item) => {
   const completionDt = item.analysisCompletionDateTime;
   const mailingDt = item.mailingDate;
@@ -237,7 +231,14 @@ const getParameterStatusBadge = (item) => {
 };
 
 // MODIFIED: Chip rendering logic updated to use chip.statusColor
-const SummaryCard = ({ title, value = null, color = "gray", icon, chips = [], className = "" }) => {
+const SummaryCard = ({
+  title,
+  value = null,
+  color = "gray",
+  icon,
+  chips = [],
+  className = "",
+}) => {
   const colorClasses = colorMap[color] || colorMap.gray;
   const MAX_CHIPS = 6;
 
@@ -255,33 +256,38 @@ const SummaryCard = ({ title, value = null, color = "gray", icon, chips = [], cl
           {icon}
         </div>
       </div>
-      
+
       {/* Conditionally render value: only render if value is explicitly passed and not null */}
       {value !== null && (
-          <p className={`text-3xl mt-6 font-extrabold ${colorClasses.text} mb-2`}>{value}</p>
+        <p className={`text-3xl mt-6 font-extrabold ${colorClasses.text} mb-2`}>
+          {value}
+        </p>
       )}
 
       {/* Display Chips for Lab Names */}
       {chips.length > 0 && (
         <div className="flex flex-wrap gap-2 mt-2 max-h-24 overflow-hidden">
           {chips.slice(0, MAX_CHIPS).map((chip, index) => (
-            <span 
-              key={index} 
-              className={`text-xs font-medium px-3 py-1 rounded-full whitespace-nowrap ${chipColorMap[chip.statusColor] || chipColorMap.gray}`}
+            <span
+              key={index}
+              className={`text-xs font-medium px-3 py-1 rounded-full whitespace-nowrap ${
+                chipColorMap[chip.statusColor] || chipColorMap.gray
+              }`}
             >
               {chip.name}
             </span>
           ))}
           {chips.length > MAX_CHIPS && (
-              <span className={`text-xs font-medium px-3 py-1 rounded-full ${chipColorMap.gray} opacity-70 whitespace-nowrap`}>
-                  +{chips.length - MAX_CHIPS} more
-              </span>
+            <span
+              className={`text-xs font-medium px-3 py-1 rounded-full ${chipColorMap.gray} opacity-70 whitespace-nowrap`}
+            >
+              +{chips.length - MAX_CHIPS} more
+            </span>
           )}
         </div>
       )}
 
       {value === null && chips.length > 0 && <div className="h-2"></div>}
-      
     </div>
   );
 };
@@ -289,7 +295,60 @@ const SummaryCard = ({ title, value = null, color = "gray", icon, chips = [], cl
 const SampleDetailsCard = ({ data }) => {
   if (!data || data.length === 0) return null;
 
-  const { registrationNo, sampleName, registrationDate, tatDate } = data[0];
+  const registrationNo = data[0].registrationNo || "";
+
+  const sampleName =
+    data.find((item) => item.sampleName && item.sampleName.trim())
+      ?.sampleName || "N/A";
+
+  const registrationDate =
+    data.find((item) => item.registrationDate)?.registrationDate || null;
+
+  // ---------- SAFE PARSER (handles DD/MM/YYYY & DD/MM/YYYY HH:mm:ss) ----------
+  const parseDate = (str) => {
+    if (!str || typeof str !== "string") return null;
+
+    const parts = str.split(/[\/ :]/);
+
+    if (parts.length < 3) return null;
+
+    const [day, month, year] = parts;
+
+    const hour = parts[3] || 0;
+    const minute = parts[4] || 0;
+    const second = parts[5] || 0;
+
+    const date = new Date(year, month - 1, day, hour, minute, second);
+
+    return isNaN(date.getTime()) ? null : date;
+  };
+
+  // ---------- PICK BIGGEST TAT DATE (SAFE) ----------
+  const tatDate = (() => {
+    const allDates = data
+      .map((item) => parseDate(item.tatDate))
+      .filter((d) => d && !isNaN(d));
+
+    if (allDates.length === 0) return null;
+
+    return new Date(Math.max(...allDates.map((d) => d.getTime())));
+  })();
+
+  // ---------- FORMATTER (ALWAYS RETURNS STRING, NEVER A DATE) ----------
+  const formatDate = (date, includeTime = false) => {
+    if (!date || isNaN(date)) return "N/A";
+
+    const dateOptions = { day: "2-digit", month: "short", year: "numeric" };
+    const timeOptions = includeTime
+      ? { hour: "2-digit", minute: "2-digit", hour12: true }
+      : null;
+
+    const result = date.toLocaleDateString("en-GB", dateOptions);
+
+    return includeTime
+      ? result + " " + date.toLocaleTimeString("en-US", timeOptions)
+      : result;
+  };
 
   const totalRegValue = data.reduce(
     (sum, item) => sum + (parseFloat(item.distributedRegisVal) || 0),
@@ -299,7 +358,7 @@ const SampleDetailsCard = ({ data }) => {
   const details = [
     {
       label: "Registration No",
-      value: registrationNo.replace(/\s+-\s*$/, ""),
+      value: registrationNo.trim(),
       icon: IoDocumentText,
       color: "text-blue-600",
       widthClass: "lg:col-span-2",
@@ -314,7 +373,7 @@ const SampleDetailsCard = ({ data }) => {
     },
     {
       label: "Reg. Date",
-      value: formatDate(registrationDate),
+      value: formatDate(parseDate(registrationDate)),
       icon: HiCalendar,
       color: "text-cyan-600",
       widthClass: "lg:col-span-1",
@@ -328,7 +387,7 @@ const SampleDetailsCard = ({ data }) => {
     },
     {
       label: "Reg. Value",
-      value: `₹${formatAmount(totalRegValue)}`,
+      value: `₹${totalRegValue.toFixed(2)}`,
       icon: HiCurrencyRupee,
       color: "text-pink-600",
       widthClass: "lg:col-span-1",
@@ -360,6 +419,7 @@ const SampleDetailsCard = ({ data }) => {
     </div>
   );
 };
+
 
 const CollapsibleDetails = ({ isExpanded, children }) => (
   <div
@@ -522,7 +582,9 @@ const SampleAnalysisTable = React.memo(
 
                       <td className="px-4 py-4 text-center">
                         <span className="inline-flex items-center gap-1.5 text-xs text-gray-600">
-                          { labData.latestCompletionTime && (<IoTime className="w-3.5 h-3.5" />)}
+                          {labData.latestCompletionTime && (
+                            <IoTime className="w-3.5 h-3.5" />
+                          )}
                           {labData.latestCompletionTime || "--"}
                         </span>
                       </td>
@@ -816,28 +878,27 @@ export default function SampleAnalysis() {
       (sum, item) => sum + (parseFloat(item.distributedRegisVal) || 0),
       0
     );
-    
+
     // Group by lab and check for pending status
     const labGroupData = data.reduce((acc, item) => {
-        const labName = item.lab || "N/A";
-        if (!acc[labName]) {
-            acc[labName] = {
-                hasPending: false,
-            };
-        }
+      const labName = item.lab || "N/A";
+      if (!acc[labName]) {
+        acc[labName] = {
+          hasPending: false,
+        };
+      }
 
-        const calculatedStatus = getCalculatedStatus(item);
+      const calculatedStatus = getCalculatedStatus(item);
 
-        if (
-            calculatedStatus === "Pending from Lab End" ||
-            calculatedStatus === "Pending from QA End"
-        ) {
-            acc[labName].hasPending = true;
-        }
+      if (
+        calculatedStatus === "Pending from Lab End" ||
+        calculatedStatus === "Pending from QA End"
+      ) {
+        acc[labName].hasPending = true;
+      }
 
-        return acc;
+      return acc;
     }, {});
-
 
     // Create the structured array for chips
     const uniqueLabNamesWithStatus = Object.entries(labGroupData)
@@ -851,7 +912,7 @@ export default function SampleAnalysis() {
         };
       })
       .sort((a, b) => a.name.localeCompare(b.name));
-      
+
     return {
       totalParameters: data.length,
       pending: pendingItems.length,
@@ -1013,17 +1074,16 @@ export default function SampleAnalysis() {
                   color="blue"
                   icon={<FaFlaskVial className="w-5 h-5" />}
                 />
-                
+
                 {/* ASSOCIATE LABS CARD - WIDER (lg:col-span-2) and value is null */}
                 <SummaryCard
                   title="Associate Labs"
                   value={null}
                   color="teal"
                   icon={<FaMicroscope className="w-5 h-5" />}
-                  chips={summaryData.uniqueLabNames} 
+                  chips={summaryData.uniqueLabNames}
                   className="lg:col-span-2"
                 />
-              
 
                 {/* <SummaryCard
                   title="Pending Value"
@@ -1031,7 +1091,6 @@ export default function SampleAnalysis() {
                   color="red"
                   icon={<HiCurrencyRupee className="w-5 h-5" />}
                 /> */}
-
               </div>
 
               <SampleAnalysisTable

@@ -420,7 +420,7 @@ SampleCount AS
     GROUP BY TRN2REFNO
 )
 SELECT 
-    t1.TRN1REFNO + '   -' AS RegistrationNo, 
+    t1.TRN1REFNO AS RegistrationNo, 
     CONVERT(NVARCHAR(10), t1.TRN1DATE, 103) AS RegistrationDate, 
     CONVERT(NVARCHAR(10), t2.Trn2Pardate, 103) AS TatDate, 
     CONVERT(NVARCHAR(10), t2.TRN2REPODT, 103) AS ReportIssueDate, 

@@ -262,9 +262,9 @@ export async function getPendingQuotations(filters = {}) {
   return response.data;
 }
 
-export async function updateQuotationStatus(quotNo, closeYn = null) {
+export async function updateQuotationStatus(quotNo, isLive, closingRemarks) {
 
-  let body = { quotNo: quotNo, closeYn: closeYn}
+  let body = { quotNo: quotNo, isLive: isLive, closingRemarks: closingRemarks}
 
   const response = await axios.patch(`${API_BASE_URL}/quotations/update-status`, body, {
     headers: { "Content-Type": "application/json" },

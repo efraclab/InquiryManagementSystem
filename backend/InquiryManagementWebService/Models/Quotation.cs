@@ -13,6 +13,11 @@
         public string BDName { get; set; }
         public string ClientCode { get; set; }
         public string ClientName { get; set; }
-        public string Status { get; set; }
+        public string ClientCity { get; set; }
+        public string ClientAddress { get; set; }
+        public string? ClientUnit { get; set; }
+        public string SampleName { get; set; }
+        public string IsLive { get; set; }
+        public string ClosingRemarks { get; set; }
     }
 }

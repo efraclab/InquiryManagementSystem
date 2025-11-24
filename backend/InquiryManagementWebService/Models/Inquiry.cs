@@ -19,6 +19,9 @@
         public string BDName { get; set; }
         public string ClientCode { get; set; }
         public string ClientName { get; set; }
+        public string ClientCity { get; set; }
+        public DateTime? TatDate { get; set; }
+        public string? ReportStatus { get; set; }
 
     }
 }
