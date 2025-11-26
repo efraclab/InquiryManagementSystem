@@ -129,6 +129,22 @@
   },
   {
     "ContainingType": "InquiryManagementWebService.Controllers.LabController",
+    "Method": "GetPendingParametersFromQA",
+    "RelativePath": "api/lab/pending-parameters-qa",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "InquiryManagementWebService.Models.ParameterRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "InquiryManagementWebService.Controllers.LabController",
     "Method": "GetSampleDetailsById",
     "RelativePath": "api/lab/sample-details",
     "HttpMethod": "POST",

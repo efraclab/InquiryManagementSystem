@@ -119,6 +119,7 @@ const SingleSelectDropdown = ({
   onSelect,
   label,
   icon: Icon,
+  color
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = React.useRef(null);
@@ -142,11 +143,11 @@ const SingleSelectDropdown = ({
     <div className="relative w-full" ref={dropdownRef}>
       <button
         type="button"
-        className="w-full bg-white border border-gray-200 rounded-xl shadow-sm px-4 py-3 text-left cursor-pointer hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-500 text-sm font-medium flex items-center justify-between group"
+        className={`w-full bg-white border border-gray-200 rounded-xl shadow-sm px-4 py-3 text-left cursor-pointer hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-${color}-500 text-sm font-medium flex items-center justify-between group`}
         onClick={() => setIsOpen(!isOpen)}
       >
         <span className="flex items-center gap-2.5">
-          <Icon className="w-4 h-4 text-blue-600 group-hover:text-blue-700" />
+          <Icon className={`w-4 h-4 text-${color}-600 group-hover:text-${color}-700`} />
           <span className="text-gray-700">{displayValue}</span>
         </span>
         <ChevronDown
@@ -166,7 +167,7 @@ const SingleSelectDropdown = ({
                   key={option.value}
                   className={`px-4 py-2.5 text-sm flex items-center justify-between cursor-pointer transition-colors duration-150 ${
                     isSelected
-                      ? "bg-blue-50 text-blue-800 font-medium"
+                      ? `bg-blue-50 text-${color}-800 font-medium`
                       : "hover:bg-gray-50 text-gray-700"
                   }`}
                   onClick={() => {
@@ -177,7 +178,7 @@ const SingleSelectDropdown = ({
                   {option.label}
                   {isSelected && (
                     <svg
-                      className="w-4 h-4 text-blue-600"
+                      className={`w-4 h-4 text-${color}-600`}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -563,6 +564,7 @@ const FilterPanel = ({
             <SingleSelectDropdown
               options={AGE_FILTER_OPTIONS}
               selected={ageFilter}
+              color={"blue"}
               onSelect={(value) => {
                 setFilters((prev) => ({
                   ...prev,
@@ -747,6 +749,7 @@ const ClosingRemarksDialog = ({
                 onSelect={setSelectedRemark}
                 label="Remark"
                 icon={FileText}
+                color={"red"}
               />
               {!selectedRemark && (
                 <p className="text-xs text-gray-500 mt-2">
@@ -1119,14 +1122,14 @@ const QuotationsTable = ({
 
                                       {/* Closing Remarks Block */}
                                       {quot.closingRemarks && (
-                                        <div className="mt-2 p-3 bg-red-50 border border-red-100 rounded-lg">
-                                          <div className="flex items-center gap-1.5 mb-1.5">
-                                            <AlertCircle className="w-3.5 h-3.5 text-red-600" />
-                                            <span className="text-[10px] font-bold uppercase text-red-600 tracking-wide">
+                                        <div className="mt-6 p-4 bg-red-50 border-l-4 border-red-400 rounded-lg shadow-inner">
+                                          <div className="flex items-center gap-2 mb-2">
+                                            <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
+                                            <span className="text-xs font-bold uppercase text-red-600 tracking-wide">
                                               Closing Remark
                                             </span>
                                           </div>
-                                          <p className="text-xs font-medium text-red-700 leading-relaxed">
+                                          <p className="text-sm font-medium text-red-800 leading-relaxed">
                                             {quot.closingRemarks}
                                           </p>
                                         </div>

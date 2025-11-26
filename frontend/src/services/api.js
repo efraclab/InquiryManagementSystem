@@ -273,3 +273,25 @@ export async function updateQuotationStatus(quotNo, isLive, closingRemarks) {
   return response.data;
 }
 
+export async function getPendingParametersQA(filters = {}) {
+
+  console.log('qa', filters)
+
+  const response = await axios.post(`${API_BASE_URL}/lab/pending-parameters-qa`, filters, {
+    headers: { "Content-Type": "application/json" },
+  });
+
+  return response.data;
+}
+
+export async function getPendingParametersOverviewQA(filters = {}) {
+
+  console.log('qa', filters)
+
+  const response = await axios.post(`${API_BASE_URL}/lab/pending-parameters-overview-qa`, filters, {
+    headers: { "Content-Type": "application/json" },
+  });
+
+  return response.data;
+}
+

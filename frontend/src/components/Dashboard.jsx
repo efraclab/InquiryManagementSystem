@@ -16,6 +16,7 @@ import { startOfMonth, endOfMonth, format } from "date-fns";
 import useInquiries from "../hooks/useInquiries";
 import useLabAnalysis from "../hooks/useLabAnalysis";
 import PendingQuotations from "./PendingQuotations";
+import QAAnalysis from "./QAAnalysis";
 
 const GraphicalAnalysis = React.lazy(() => import("./GraphicalAnalysis"));
 
@@ -496,7 +497,8 @@ export default function Dashboard({
         isMinimized={isMinimized}
         onToggleMinimize={handleToggleMinimize}
         onLogout={handleLogout}
-        bdCodeProp={bdCode} // Pass the centralized bdCode state (which holds the username)
+        bdCode={initialBdCode} // Pass the centralized bdCode state (which holds the username)
+        designation={designation}
       />
 
       <main
@@ -543,6 +545,7 @@ export default function Dashboard({
               queryType !== "bdProjection" &&
               queryType !== "bdPerformanceAnalysis" &&
               queryType !== "pendingQuotations" &&
+              queryType !== "qaAnalysis" &&
               queryType !== "businessAnalysis" && (
                 <Filters
                   onChange={onFiltersChange}
@@ -622,6 +625,13 @@ export default function Dashboard({
                   username={username}
                   designation={designation}
                   bdCode={initialBdCode}
+                />
+              </div>
+            ) : queryType === "qaAnalysis" ? (
+              <div className="max-w-7xl mx-auto px-2 -mt-4 relative">
+                <QAAnalysis
+                  username={username}
+                  designation={designation}
                 />
               </div>
             ) : (

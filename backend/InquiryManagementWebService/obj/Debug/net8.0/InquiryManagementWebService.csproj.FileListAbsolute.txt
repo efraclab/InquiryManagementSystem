@@ -278,3 +278,4 @@ D:\react-projects\inquery-ms\backend\InquiryManagementWebService\obj\Debug\net8.
 D:\react-projects\inquery-ms\backend\InquiryManagementWebService\obj\Debug\net8.0\InquiryManagementWebService.genruntimeconfig.cache
 D:\react-projects\inquery-ms\backend\InquiryManagementWebService\obj\Debug\net8.0\ref\InquiryManagementWebService.dll
 D:\react-projects\inquery-ms\backend\InquiryManagementWebService\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+D:\react-projects\inquery-ms\backend\InquiryManagementWebService\obj\Debug\net8.0\swae.build.ex.cache

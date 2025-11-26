@@ -15,6 +15,7 @@ import {
   MdTrendingUp,
 } from "react-icons/md";
 import { IoAnalytics } from "react-icons/io5";
+import { FaMagnifyingGlass } from "react-icons/fa6";
 
 export default function SideMenus({
   activeView,
@@ -22,9 +23,9 @@ export default function SideMenus({
   isMinimized = false,
   onToggleMinimize,
   onLogout,
-  bdCodeProp, 
+  bdCode,
+  designation, 
 }) {
-  const bdCode = bdCodeProp;
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   const searchingMenus = [
@@ -34,11 +35,12 @@ export default function SideMenus({
   ];
 
   const analysisMenus = [
+    { key: "pendingQuotations", label: "Pnd. Quotations", icon: HiDocument },
     bdCode && { key: "bdProjection", label: "BD Projection", icon: MdTrendingUp },
     !bdCode && { key: "bdPerformanceAnalysis", label: "BD Performance", icon: IoAnalytics },
     { key: "businessAnalysis", label: "Business Analysis", icon: HiCurrencyRupee },
-    !bdCode && { key: "labAnalysis", label: "LAB Analysis", icon: HiBeaker },
-    { key: "pendingQuotations", label: "Pnd. Quotations", icon: HiDocument },
+    designation === 'Administrator' && { key: "labAnalysis", label: "LAB Analysis", icon: HiBeaker },
+    designation === 'Administrator' && { key: "qaAnalysis", label: "QA Analysis", icon: FaMagnifyingGlass },
     { key: "sampleAnalysis", label: "Sample Analysis", icon: TestTube2 },
   ].filter(Boolean);
 
@@ -98,7 +100,7 @@ export default function SideMenus({
               initial={{ x: -2, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 0.1 }}
-              className="absolute right-full mr-1 top-1/2 -translate-y-1/2"
+              className="mr-1 top-1/2 -translate-y-1/2"
             >
               <svg width="12" height="12" viewBox="0 0 12 12" className="drop-shadow-lg">
                 <path 
@@ -172,7 +174,7 @@ export default function SideMenus({
               onClick={onToggleMinimize}
               whileHover={{ scale: 1.15, rotate: 180 }}
               whileTap={{ scale: 0.9 }}
-              className="p-2 rounded-xl bg-white/10 hover:bg-white/20 transition-all duration-300 backdrop-blur-sm border border-white/20 shadow-lg hover:shadow-xl"
+              className="p-1 rounded-md bg-white/10 hover:bg-white/20 transition-all duration-300 backdrop-blur-sm border border-white/20 shadow-lg hover:shadow-xl"
             >
               <ToggleIcon className="w-4 h-4" />
             </motion.button>

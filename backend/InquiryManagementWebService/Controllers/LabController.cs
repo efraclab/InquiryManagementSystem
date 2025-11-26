@@ -57,6 +57,34 @@ namespace InquiryManagementWebService.Controllers
             }
         }
 
+        [HttpPost("pending-parameters-qa")]
+        public async Task<IActionResult> GetPendingParametersFromQA([FromBody] ParameterRequest request)
+        {
+            try
+            {
+                var response = await _labRepository.GetPendingParametersFromQAAsync(request);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPost("pending-parameters-overview-qa")]
+        public async Task<IActionResult> GetPendingParametersOverviewFromQA([FromBody] ParameterRequest request)
+        {
+            try
+            {
+                var response = await _labRepository.GetPendingParametersOverviewFromQAAsync(request);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [HttpPost("summaries")]
         public async Task<IActionResult> GetLabSummary([FromBody] SampleSummaryRequest request)
         {
