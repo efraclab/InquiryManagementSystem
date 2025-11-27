@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "D:\\react-projects\\inquery-ms\\backend\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{49F5591E-BFB9-4AA7-B7B0-A1AFC6D02B0C}|InquiryManagementWebService\\InquiryManagementWebService.csproj|d:\\react-projects\\inquery-ms\\backend\\inquirymanagementwebservice\\repositories\\userrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{49F5591E-BFB9-4AA7-B7B0-A1AFC6D02B0C}|InquiryManagementWebService\\InquiryManagementWebService.csproj|solutionrelative:inquirymanagementwebservice\\repositories\\userrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{49F5591E-BFB9-4AA7-B7B0-A1AFC6D02B0C}|InquiryManagementWebService\\InquiryManagementWebService.csproj|d:\\react-projects\\inquery-ms\\backend\\inquirymanagementwebservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{49F5591E-BFB9-4AA7-B7B0-A1AFC6D02B0C}|InquiryManagementWebService\\InquiryManagementWebService.csproj|solutionrelative:inquirymanagementwebservice\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -127,10 +131,6 @@
       "RelativeMoniker": "D:0:0:{49F5591E-BFB9-4AA7-B7B0-A1AFC6D02B0C}|InquiryManagementWebService\\InquiryManagementWebService.csproj|solutionrelative:inquirymanagementwebservice\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{49F5591E-BFB9-4AA7-B7B0-A1AFC6D02B0C}|InquiryManagementWebService\\InquiryManagementWebService.csproj|d:\\react-projects\\inquery-ms\\backend\\inquirymanagementwebservice\\repositories\\userrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{49F5591E-BFB9-4AA7-B7B0-A1AFC6D02B0C}|InquiryManagementWebService\\InquiryManagementWebService.csproj|solutionrelative:inquirymanagementwebservice\\repositories\\userrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{49F5591E-BFB9-4AA7-B7B0-A1AFC6D02B0C}|InquiryManagementWebService\\InquiryManagementWebService.csproj|d:\\react-projects\\inquery-ms\\backend\\inquirymanagementwebservice\\repositories\\iprojectionrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{49F5591E-BFB9-4AA7-B7B0-A1AFC6D02B0C}|InquiryManagementWebService\\InquiryManagementWebService.csproj|solutionrelative:inquirymanagementwebservice\\repositories\\iprojectionrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -210,20 +210,7 @@
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "LabRepository.cs",
-              "DocumentMoniker": "D:\\react-projects\\inquery-ms\\backend\\InquiryManagementWebService\\Repositories\\LabRepository.cs",
-              "RelativeDocumentMoniker": "InquiryManagementWebService\\Repositories\\LabRepository.cs",
-              "ToolTip": "D:\\react-projects\\inquery-ms\\backend\\InquiryManagementWebService\\Repositories\\LabRepository.cs",
-              "RelativeToolTip": "InquiryManagementWebService\\Repositories\\LabRepository.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABADAAANAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-03T12:08:50.693Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "InquiryController.cs",
               "DocumentMoniker": "D:\\react-projects\\inquery-ms\\backend\\InquiryManagementWebService\\Controllers\\InquiryController.cs",
               "RelativeDocumentMoniker": "InquiryManagementWebService\\Controllers\\InquiryController.cs",
@@ -235,7 +222,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "LabController.cs",
               "DocumentMoniker": "D:\\react-projects\\inquery-ms\\backend\\InquiryManagementWebService\\Controllers\\LabController.cs",
               "RelativeDocumentMoniker": "InquiryManagementWebService\\Controllers\\LabController.cs",
@@ -247,7 +234,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "SampleDetails.cs",
               "DocumentMoniker": "D:\\react-projects\\inquery-ms\\backend\\InquiryManagementWebService\\Models\\SampleDetails.cs",
               "RelativeDocumentMoniker": "InquiryManagementWebService\\Models\\SampleDetails.cs",
@@ -259,7 +246,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "InquiryManagementWebService.csproj",
               "DocumentMoniker": "D:\\react-projects\\inquery-ms\\backend\\InquiryManagementWebService\\InquiryManagementWebService.csproj",
               "RelativeDocumentMoniker": "InquiryManagementWebService\\InquiryManagementWebService.csproj",
@@ -267,25 +254,49 @@
               "RelativeToolTip": "InquiryManagementWebService\\InquiryManagementWebService.csproj",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-11-25T07:32:15.541Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-25T07:32:15.541Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\react-projects\\inquery-ms\\backend\\InquiryManagementWebService\\Program.cs",
               "RelativeDocumentMoniker": "InquiryManagementWebService\\Program.cs",
               "ToolTip": "D:\\react-projects\\inquery-ms\\backend\\InquiryManagementWebService\\Program.cs",
               "RelativeToolTip": "InquiryManagementWebService\\Program.cs",
-              "ViewState": "AgIAACIAAAAAAAAAAAAswEsAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAACIAAAAAAAAAAAAswDIAAAAkAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-09-16T11:48:35.755Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 0,
+              "Title": "UserRepository.cs",
+              "DocumentMoniker": "D:\\react-projects\\inquery-ms\\backend\\InquiryManagementWebService\\Repositories\\UserRepository.cs",
+              "RelativeDocumentMoniker": "InquiryManagementWebService\\Repositories\\UserRepository.cs",
+              "ToolTip": "D:\\react-projects\\inquery-ms\\backend\\InquiryManagementWebService\\Repositories\\UserRepository.cs",
+              "RelativeToolTip": "InquiryManagementWebService\\Repositories\\UserRepository.cs",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAqwB8AAAAyAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-31T06:08:27.504Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "LabRepository.cs",
+              "DocumentMoniker": "D:\\react-projects\\inquery-ms\\backend\\InquiryManagementWebService\\Repositories\\LabRepository.cs",
+              "RelativeDocumentMoniker": "InquiryManagementWebService\\Repositories\\LabRepository.cs",
+              "ToolTip": "D:\\react-projects\\inquery-ms\\backend\\InquiryManagementWebService\\Repositories\\LabRepository.cs",
+              "RelativeToolTip": "InquiryManagementWebService\\Repositories\\LabRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABADAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-03T12:08:50.693Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
               "Title": "LabParameterOverview.cs",
               "DocumentMoniker": "D:\\react-projects\\inquery-ms\\backend\\InquiryManagementWebService\\Models\\LabParameterOverview.cs",
               "RelativeDocumentMoniker": "InquiryManagementWebService\\Models\\LabParameterOverview.cs",
@@ -297,7 +308,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "ILabRepository.cs",
               "DocumentMoniker": "D:\\react-projects\\inquery-ms\\backend\\InquiryManagementWebService\\Repositories\\ILabRepository.cs",
               "RelativeDocumentMoniker": "InquiryManagementWebService\\Repositories\\ILabRepository.cs",
@@ -309,7 +320,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 10,
               "Title": "ParameterRequest.cs",
               "DocumentMoniker": "D:\\react-projects\\inquery-ms\\backend\\InquiryManagementWebService\\Models\\ParameterRequest.cs",
               "RelativeDocumentMoniker": "InquiryManagementWebService\\Models\\ParameterRequest.cs",
@@ -321,7 +332,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 9,
               "Title": "InquiryRepository.cs",
               "DocumentMoniker": "D:\\react-projects\\inquery-ms\\backend\\InquiryManagementWebService\\Repositories\\InquiryRepository.cs",
               "RelativeDocumentMoniker": "InquiryManagementWebService\\Repositories\\InquiryRepository.cs",
@@ -333,7 +344,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 12,
               "Title": "appsettings.Development.json",
               "DocumentMoniker": "D:\\react-projects\\inquery-ms\\backend\\InquiryManagementWebService\\appsettings.Development.json",
               "RelativeDocumentMoniker": "InquiryManagementWebService\\appsettings.Development.json",
@@ -345,7 +356,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 11,
               "Title": "appsettings.json",
               "DocumentMoniker": "D:\\react-projects\\inquery-ms\\backend\\InquiryManagementWebService\\appsettings.json",
               "RelativeDocumentMoniker": "InquiryManagementWebService\\appsettings.json",
@@ -357,7 +368,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 15,
               "Title": "launchSettings.json",
               "DocumentMoniker": "D:\\react-projects\\inquery-ms\\backend\\InquiryManagementWebService\\Properties\\launchSettings.json",
               "RelativeDocumentMoniker": "InquiryManagementWebService\\Properties\\launchSettings.json",
@@ -369,7 +380,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 14,
               "Title": "ProjectionRepository.cs",
               "DocumentMoniker": "D:\\react-projects\\inquery-ms\\backend\\InquiryManagementWebService\\Repositories\\ProjectionRepository.cs",
               "RelativeDocumentMoniker": "InquiryManagementWebService\\Repositories\\ProjectionRepository.cs",
@@ -381,7 +392,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 13,
               "Title": "BdTargetRequest.cs",
               "DocumentMoniker": "D:\\react-projects\\inquery-ms\\backend\\InquiryManagementWebService\\Models\\BdTargetRequest.cs",
               "RelativeDocumentMoniker": "InquiryManagementWebService\\Models\\BdTargetRequest.cs",
@@ -393,7 +404,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 16,
               "Title": "InquiryRequest.cs",
               "DocumentMoniker": "D:\\react-projects\\inquery-ms\\backend\\InquiryManagementWebService\\Models\\InquiryRequest.cs",
               "RelativeDocumentMoniker": "InquiryManagementWebService\\Models\\InquiryRequest.cs",
@@ -405,7 +416,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 19,
               "Title": "Quotation.cs",
               "DocumentMoniker": "D:\\react-projects\\inquery-ms\\backend\\InquiryManagementWebService\\Models\\Quotation.cs",
               "RelativeDocumentMoniker": "InquiryManagementWebService\\Models\\Quotation.cs",
@@ -417,7 +428,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 20,
               "Title": "Inquiry.cs",
               "DocumentMoniker": "D:\\react-projects\\inquery-ms\\backend\\InquiryManagementWebService\\Models\\Inquiry.cs",
               "RelativeDocumentMoniker": "InquiryManagementWebService\\Models\\Inquiry.cs",
@@ -429,7 +440,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 18,
               "Title": "QuotationRepositiry.cs",
               "DocumentMoniker": "D:\\react-projects\\inquery-ms\\backend\\InquiryManagementWebService\\Repositories\\QuotationRepositiry.cs",
               "RelativeDocumentMoniker": "InquiryManagementWebService\\Repositories\\QuotationRepositiry.cs",
@@ -441,7 +452,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 17,
               "Title": "LabSummary.cs",
               "DocumentMoniker": "D:\\react-projects\\inquery-ms\\backend\\InquiryManagementWebService\\Models\\LabSummary.cs",
               "RelativeDocumentMoniker": "InquiryManagementWebService\\Models\\LabSummary.cs",
@@ -453,7 +464,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 21,
               "Title": "SampleSummary.cs",
               "DocumentMoniker": "D:\\react-projects\\inquery-ms\\backend\\InquiryManagementWebService\\Models\\SampleSummary.cs",
               "RelativeDocumentMoniker": "InquiryManagementWebService\\Models\\SampleSummary.cs",
@@ -465,7 +476,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 22,
               "Title": "UpdateQuotationRequest.cs",
               "DocumentMoniker": "D:\\react-projects\\inquery-ms\\backend\\InquiryManagementWebService\\Models\\UpdateQuotationRequest.cs",
               "RelativeDocumentMoniker": "InquiryManagementWebService\\Models\\UpdateQuotationRequest.cs",
@@ -477,7 +488,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 23,
               "Title": "ClientDetail.cs",
               "DocumentMoniker": "D:\\react-projects\\inquery-ms\\backend\\InquiryManagementWebService\\Models\\ClientDetail.cs",
               "RelativeDocumentMoniker": "InquiryManagementWebService\\Models\\ClientDetail.cs",
@@ -489,7 +500,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
+              "DocumentIndex": 25,
               "Title": "QuotationController.cs",
               "DocumentMoniker": "D:\\react-projects\\inquery-ms\\backend\\InquiryManagementWebService\\Controllers\\QuotationController.cs",
               "RelativeDocumentMoniker": "InquiryManagementWebService\\Controllers\\QuotationController.cs",
@@ -501,7 +512,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 24,
               "Title": "QuotationRequest.cs",
               "DocumentMoniker": "D:\\react-projects\\inquery-ms\\backend\\InquiryManagementWebService\\Models\\QuotationRequest.cs",
               "RelativeDocumentMoniker": "InquiryManagementWebService\\Models\\QuotationRequest.cs",
@@ -513,7 +524,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 26,
               "Title": "IQuotationRepositiry.cs",
               "DocumentMoniker": "D:\\react-projects\\inquery-ms\\backend\\InquiryManagementWebService\\Repositories\\IQuotationRepositiry.cs",
               "RelativeDocumentMoniker": "InquiryManagementWebService\\Repositories\\IQuotationRepositiry.cs",
@@ -525,7 +536,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 26,
+              "DocumentIndex": 27,
               "Title": "BusinessRepository.cs",
               "DocumentMoniker": "D:\\react-projects\\inquery-ms\\backend\\InquiryManagementWebService\\Repositories\\BusinessRepository.cs",
               "RelativeDocumentMoniker": "InquiryManagementWebService\\Repositories\\BusinessRepository.cs",
@@ -537,7 +548,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 27,
+              "DocumentIndex": 28,
               "Title": "BdProjectionFilter.cs",
               "DocumentMoniker": "D:\\react-projects\\inquery-ms\\backend\\InquiryManagementWebService\\Models\\BdProjectionFilter.cs",
               "RelativeDocumentMoniker": "InquiryManagementWebService\\Models\\BdProjectionFilter.cs",
@@ -549,7 +560,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 28,
+              "DocumentIndex": 29,
               "Title": "IBusinessRepository.cs",
               "DocumentMoniker": "D:\\react-projects\\inquery-ms\\backend\\InquiryManagementWebService\\Repositories\\IBusinessRepository.cs",
               "RelativeDocumentMoniker": "InquiryManagementWebService\\Repositories\\IBusinessRepository.cs",
@@ -561,7 +572,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 29,
+              "DocumentIndex": 30,
               "Title": "BdBusinessSummaryRequest.cs",
               "DocumentMoniker": "D:\\react-projects\\inquery-ms\\backend\\InquiryManagementWebService\\Models\\BdBusinessSummaryRequest.cs",
               "RelativeDocumentMoniker": "InquiryManagementWebService\\Models\\BdBusinessSummaryRequest.cs",
@@ -573,7 +584,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 30,
+              "DocumentIndex": 31,
               "Title": "AuthController.cs",
               "DocumentMoniker": "D:\\react-projects\\inquery-ms\\backend\\InquiryManagementWebService\\Controllers\\AuthController.cs",
               "RelativeDocumentMoniker": "InquiryManagementWebService\\Controllers\\AuthController.cs",
@@ -582,18 +593,6 @@
               "ViewState": "AgIAAAIAAAAAAAAAAAAUwBEAAAAhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-10-31T06:34:52.212Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 31,
-              "Title": "UserRepository.cs",
-              "DocumentMoniker": "D:\\react-projects\\inquery-ms\\backend\\InquiryManagementWebService\\Repositories\\UserRepository.cs",
-              "RelativeDocumentMoniker": "InquiryManagementWebService\\Repositories\\UserRepository.cs",
-              "ToolTip": "D:\\react-projects\\inquery-ms\\backend\\InquiryManagementWebService\\Repositories\\UserRepository.cs",
-              "RelativeToolTip": "InquiryManagementWebService\\Repositories\\UserRepository.cs",
-              "ViewState": "AgIAAAQAAAAAAAAAAAAiwBEAAABAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-31T06:08:27.504Z"
             },
             {
               "$type": "Document",
