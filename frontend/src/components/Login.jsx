@@ -136,7 +136,7 @@ const Login = ({ onLoginSuccess }) => {
                 Welcome Back!
               </h1>
               <p className="text-blue-100 text-sm lg:text-lg mb-6 lg:mb-12">
-                Sign in to access your Business Development Dashboard
+                Sign in to access your LIMS Dashboard
               </p>
 
               {/* Features - Only show on desktop */}

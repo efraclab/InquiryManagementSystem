@@ -16,28 +16,70 @@ import {
   ListFilter,
   User,
   Hash,
+  ChevronRight,
+  FileText,
+  Beaker,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
+// NOTE: Placeholder API imports - ensure these services are available
 import {
   getLabNames,
   getPendingParametersQA,
-  getPendingParametersOverviewQA, // Imported API
+  getPendingParametersOverviewQA,
 } from "../services/api";
-import { HiHashtag } from "react-icons/hi2";
-import { FaHashtag } from "react-icons/fa6";
+import { FaMagnifyingGlass } from "react-icons/fa6";
 
 // --- Helper Functions ---
 
+/**
+ * Converts a YYYY-MM-DD date string and a time indicator ('start' or 'end')
+ * into a proper ISO 8601 datetime string (YYYY-MM-DDTHH:MM:SS.sssZ).
+ * This ensures compatibility with standard APIs expecting a DateTime object.
+ * @param {string} dateString - The date in YYYY-MM-DD format from the picker.
+ * @param {'start' | 'end'} type - 'start' for 00:00:00.000, 'end' for 23:59:59.999.
+ * @returns {string | undefined} - ISO 8601 string or undefined if dateString is falsy.
+ */
+function getISODateTime(dateString, type) {
+  if (!dateString) return undefined;
+  
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return undefined;
+
+  let year = date.getFullYear();
+  let month = (date.getMonth() + 1).toString().padStart(2, '0');
+  let day = date.getDate().toString().padStart(2, '0');
+  
+  // Set time component based on 'start' or 'end'
+  if (type === 'start') {
+    // YYYY-MM-DDT00:00:00.000
+    return `${year}-${month}-${day}T00:00:00.000`;
+  } else if (type === 'end') {
+    // YYYY-MM-DDT23:59:59.999
+    return `${year}-${month}-${day}T23:59:59.999`;
+  }
+  return undefined;
+}
+
+
 function parseDate(dateString) {
   if (!dateString) return null;
-  // Handle "dd/mm/yyyy" or "dd/mm/yyyy HH:mm:ss"
+  // Try to handle existing custom formats or standard formats
   const parts = dateString.split(" ");
-  const dateParts = parts[0].split("/");
+  const dateParts = parts[0].split("T")[0].split("-"); // Handle YYYY-MM-DD format
+
   if (dateParts.length === 3) {
-    // Return standard Date object (month is 0-indexed)
-    return new Date(dateParts[2], dateParts[1] - 1, dateParts[0]);
+      // Assuming YYYY-MM-DD format from the custom ISO date string created below
+      return new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
   }
+  
+  // Fallback for previous formats
+  const partsCustom = dateString.split(" ");
+  const datePartsCustom = partsCustom[0].split("/");
+  if (datePartsCustom.length === 3) {
+    return new Date(datePartsCustom[2], datePartsCustom[1] - 1, datePartsCustom[0]);
+  }
+  
   return new Date(dateString);
 }
 
@@ -45,7 +87,7 @@ function formatDate(dateString) {
   if (!dateString) return "-";
   try {
     const date = parseDate(dateString);
-    if (!date || isNaN(date.getTime())) return dateString; // Fallback to original string
+    if (!date || isNaN(date.getTime())) return dateString;
     return date.toLocaleDateString("en-IN", {
       day: "2-digit",
       month: "short",
@@ -54,6 +96,31 @@ function formatDate(dateString) {
   } catch (e) {
     return dateString;
   }
+}
+
+// --- Aggregate parameters by registration number ---
+function aggregateByRegistration(parameters) {
+  const grouped = {};
+  
+  parameters.forEach(param => {
+    const regNo = param.registrationNo;
+    if (!grouped[regNo]) {
+      grouped[regNo] = {
+        registrationNo: regNo,
+        sampleName: param.sampleName,
+        registrationDate: param.registrationDate,
+        analysisCompletionDateTime: param.analysisCompletionDateTime,
+        tatDate: param.tatDate,
+        parameters: []
+      };
+    }
+    grouped[regNo].parameters.push({
+      name: param.parameter,
+      sampleName: param.sampleName
+    });
+  });
+  
+  return Object.values(grouped);
 }
 
 // --- Reusable UI Components ---
@@ -243,7 +310,6 @@ const FilterPanel = ({ filters, setFilters, labOptions, onClear }) => {
       toDate: today,
       selectedLabs: [],
     });
-    // Call the parent's onClear, which will trigger a re-fetch
     if (onClear) onClear();
   };
 
@@ -262,19 +328,16 @@ const FilterPanel = ({ filters, setFilters, labOptions, onClear }) => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-end">
-        {/* Date Filter */}
         <div className="lg:col-span-5">
           <DateRangePicker
             fromDate={fromDate}
             toDate={toDate}
             onChange={({ fromDate, toDate }) => {
-              // Live filter: updates state directly, which triggers useEffect in parent
               setFilters((prev) => ({ ...prev, fromDate, toDate }));
             }}
           />
         </div>
 
-        {/* Lab Selection */}
         <div className="lg:col-span-4">
           <label className="text-xs font-medium text-gray-600 block mb-1.5">
             Lab Selection
@@ -282,7 +345,7 @@ const FilterPanel = ({ filters, setFilters, labOptions, onClear }) => {
           <MultiSelectDropdown
             options={labOptions}
             selected={selectedLabs}
-            onToggle={handleLabToggle} // Live filter: updates state directly
+            onToggle={handleLabToggle}
             label="Labs"
             icon={FlaskConical}
             onSelectAll={handleSelectAllLabs}
@@ -290,7 +353,6 @@ const FilterPanel = ({ filters, setFilters, labOptions, onClear }) => {
           />
         </div>
 
-        {/* Actions - Only Reset remains */}
         <div className="lg:col-span-3 flex justify-end gap-3">
           <button
             onClick={handleClearFilters}
@@ -336,7 +398,7 @@ const NoDataFound = () => (
       </div>
       <span className="text-xl font-medium text-gray-600">No Data Found</span>
       <span className="text-sm text-gray-400 mt-2 max-w-md text-center">
-        We couldn’t find any data matching your filters. Try adjusting your
+        We couldn't find any data matching your filters. Try adjusting your
         filter selection.
       </span>
     </div>
@@ -356,69 +418,246 @@ const DetailedLoader = ({ labName }) => (
   </motion.div>
 );
 
-// --- Parameters Table Component (Updated for efficiency) ---
-const ParametersTable = ({ parameters }) => {
+// --- Registration Row Component ---
+const RegistrationRow = ({ registration, index }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const parameterCount = registration.parameters.length;
+
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full text-sm text-left">
-        <thead className="bg-blue-500/10 text-blue-900 font-medium border-b border-blue-100">
+    <>
+      <tr
+        // Reduced vertical padding (py-3 instead of py-4) and smaller text
+        className="hover:bg-blue-50/40 transition-all duration-200 cursor-pointer border-b border-gray-100 text-xs"
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
+        <td className="px-4 py-3">
+          <div className="flex items-center gap-2">
+            <motion.div
+              animate={{ rotate: isExpanded ? 90 : 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              <ChevronRight className="w-4 h-4 text-gray-500" />
+            </motion.div>
+          </div>
+        </td>
+        <td className="px-4 py-3">
+          <span className="font-semibold text-gray-900">
+            {registration.registrationNo}
+          </span>
+        </td>
+        <td className="px-4 py-3 max-w-60"> 
+          <span className="text-gray-700 font-medium">
+            {registration.sampleName}
+          </span>
+        </td>
+        <td className="px-4 py-3 text-center">
+          {/* Stacked dates for brevity */}
+          <div className="space-y-0.5 leading-none">
+            <p className="text-gray-700 font-medium text-xs">
+              {formatDate(registration.registrationDate)}
+            </p>
+            <p className="text-xs text-green-600 font-medium">
+              {formatDate(registration.analysisCompletionDateTime)}
+            </p>
+          </div>
+        </td>
+        <td className="px-4 py-3 text-center">
+          <span className="inline-flex items-center px-2 py-0.5 text-xs font-bold text-red-700">
+            {formatDate(registration.tatDate)}
+          </span>
+        </td>
+        <td className="px-4 py-3 text-center">
+          <span className="inline-flex items-center px-2 py-0.5 text-xs font-bold text-blue-700">
+            {parameterCount}
+          </span>
+        </td>
+      </tr>
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.tr
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <td colSpan="6" className="px-4 py-3 bg-gradient-to-br from-blue-100/50 to-cyan-100/30 border-y border-blue-100">
+              <div className="ml-8">
+                <div className="flex items-center gap-2 mb-2">
+                  <TestTube2 className="w-4 h-4 text-blue-600" />
+                  <span className="text-xs font-bold text-gray-700">
+                    Pending Parameters ({parameterCount})
+                  </span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {registration.parameters.map((param, idx) => (
+                    <motion.div
+                      key={idx}
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ delay: idx * 0.05 }}
+                      className="inline-flex items-center gap-1.5 px-2 py-1 bg-white rounded-lg shadow-sm border border-blue-200 hover:shadow-md hover:border-blue-300 transition-all duration-200 text-xs"
+                    >
+                      <div className="w-1 h-1 rounded-full bg-blue-500"></div>
+                      <span className="font-medium text-gray-800">
+                        {param.name}
+                      </span>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </td>
+          </motion.tr>
+        )}
+      </AnimatePresence>
+    </>
+  );
+};
+
+// --- Aggregated Registration Table Component ---
+const RegistrationTable = ({ registrations }) => {
+  return (
+    <div className="overflow-x-auto rounded-lg border border-gray-200">
+      <table className="min-w-full text-xs"> {/* Smaller text in table */}
+        <thead className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white">
           <tr>
-            <th className="px-4 py-3">
-              <FaHashtag className="w-3.5 h-3.5"/>
+            <th className="px-3 py-2.5 text-left text-xs font-bold uppercase tracking-wide"> {/* Reduced padding */}
             </th>
-            <th className="px-4 py-3 text-xs font-extrabold uppercase tracking-wide min-w-[150px]">
-              Reg. No.
+            <th className="px-3 py-2.5 text-left text-xs font-bold uppercase tracking-wide">
+              Registration No.
             </th>
-            <th className="px-4 py-3 text-xs font-extrabold uppercase tracking-wide min-w-[250px]">
-              Sample & Parameter
+            <th className="px-3 py-2.5 text-left text-xs font-bold uppercase tracking-wide">
+              Sample Name
             </th>
-            <th className="px-4 py-3 text-center text-xs font-extrabold uppercase tracking-wide min-w-[180px]">
-              Reg. Date & Comp. Date
+            <th className="px-3 py-2.5 text-center text-xs font-bold uppercase tracking-wide">
+              <div>Reg. Date / Comp. Date</div>
             </th>
-            <th className="px-4 py-3 text-center text-xs font-extrabold uppercase tracking-wide min-w-[120px]">
+            <th className="px-3 py-2.5 text-center text-xs font-bold uppercase tracking-wide">
               TAT Date
+            </th>
+            <th className="px-3 py-2.5 text-center text-xs font-bold uppercase tracking-wide">
+              Params
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-100">
-          {parameters.map((param, idx) => (
-            <tr
-              key={`${param.registrationNo}-${param.parameter}-${idx}`}
-              className="hover:bg-blue-50/30 transition-colors"
-            >
-              <td className="px-4 py-3 text-center text-gray-500 font-medium whitespace-nowrap">
-                {idx + 1}
-              </td>
-              <td className="px-4 py-3 font-semibold text-gray-800 whitespace-nowrap">
-                {param.registrationNo}
-              </td>
-              <td className="px-4 py-3">
-                <p className="font-medium text-gray-800 leading-snug">
-                  {param.parameter}
-                </p>
-                <p className="text-xs text-gray-500 leading-snug mt-0.5">
-                  Sample: {param.sampleName}
-                </p>
-              </td>
-              <td className="px-4 py-3 text-center">
-                <p className="text-gray-600 font-medium leading-snug">
-                  Reg: {formatDate(param.registrationDate)}
-                </p>
-                <p className="text-xs text-green-700 leading-snug mt-0.5 font-medium">
-                  Comp: {formatDate(param.analysisCompletionDateTime)}
-                </p>
-              </td>
-              <td className="px-4 py-3 text-center whitespace-nowrap">
-                <span className="inline-flex items-center justify-center w-full gap-1 px-2 py-1 rounded-full text-[11px] font-bold bg-red-50 text-red-700 border border-red-200 shadow-sm">
-                  <Clock className="w-3 h-3 flex-shrink-0" />
-                  {formatDate(param.tatDate)}
-                </span>
-              </td>
-            </tr>
+        <tbody className="bg-white divide-y divide-gray-100">
+          {registrations.map((registration, idx) => (
+            <RegistrationRow
+              key={registration.registrationNo}
+              registration={registration}
+              index={idx}
+            />
           ))}
         </tbody>
       </table>
     </div>
+  );
+};
+
+// --- Mobile Registration Card (No changes to maintain existing mobile UI) ---
+const MobileRegistrationCard = ({ registration, index }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const parameterCount = registration.parameters.length;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.05 }}
+      className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden"
+    >
+      {/* Card Header (Clickable) */}
+      <div
+        className="p-4 cursor-pointer transition-all duration-200"
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-3">
+            <div className="p-1.5 bg-blue-100 rounded-lg">
+              <FileText className="w-4 h-4 text-blue-600" />
+            </div>
+            <div>
+              <span className="text-xs text-gray-500 block">Reg. No.</span>
+              <span className="font-bold text-gray-900">
+                {registration.registrationNo}
+              </span>
+            </div>
+          </div>
+          <motion.div
+            animate={{ rotate: isExpanded ? 180 : 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <ChevronDown className="w-5 h-5 text-gray-400" />
+          </motion.div>
+        </div>
+
+        <div className="flex items-center gap-2 mb-3 pb-3 border-b border-gray-100">
+          <Beaker className="w-4 h-4 text-gray-400" />
+          <span className="text-sm text-gray-700">{registration.sampleName}</span>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3 mb-3">
+          <div>
+            <span className="text-xs text-gray-500 block mb-1">Reg. Date</span>
+            <span className="text-sm font-medium text-gray-700">
+              {formatDate(registration.registrationDate)}
+            </span>
+          </div>
+          <div>
+            <span className="text-xs text-gray-500 block mb-1">Comp. Date</span>
+            <span className="text-sm font-medium text-green-600">
+              {formatDate(registration.analysisCompletionDateTime)}
+            </span>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-red-50 text-red-700 border border-red-200">
+            <Clock className="w-3 h-3" />
+            {formatDate(registration.tatDate)}
+          </span>
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700">
+            <TestTube2 className="w-3 h-3" />
+            {parameterCount}
+          </span>
+        </div>
+      </div>
+
+      {/* Expanded Parameters Content */}
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden bg-gradient-to-br from-blue-50/50 to-cyan-50/30"
+          >
+            <div className="p-4 pt-2">
+              <div className="flex items-center gap-2 mb-2">
+                <TestTube2 className="w-4 h-4 text-blue-600" />
+                <span className="text-xs font-bold text-gray-700">
+                  Pending Parameters
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {registration.parameters.map((param, idx) => (
+                  <motion.div
+                    key={idx}
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: idx * 0.05 }}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-white rounded-lg shadow-sm border border-blue-200 text-xs font-medium text-gray-800"
+                  >
+                    <div className="w-1 h-1 rounded-full bg-blue-500"></div>
+                    {param.name}
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 };
 
@@ -428,27 +667,33 @@ const LabGroup = ({ labName, parameterCount, filters }) => {
   const [parameters, setParameters] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Clear parameters if filters change while collapsed, forcing a reload on next expand
   useEffect(() => {
+    // Clear parameters when filters change
     if (!isExpanded) {
       setParameters([]);
     }
   }, [filters, isExpanded]);
 
   const fetchDetailedParameters = useCallback(async () => {
-    // Check if data is already present and filters haven't changed since it was fetched
     if (!isExpanded || parameters.length > 0) return;
 
     setIsLoading(true);
     try {
-      // API call uses the existing filters + the specific lab name
+      // Use the ISO 8601 helper function (FIXED)
+      const fromDateTime = filters.fromDate 
+        ? getISODateTime(filters.fromDate.split(' ')[0], 'start') // Extract YYYY-MM-DD from appliedFilters
+        : undefined;
+      const toDateTime = filters.toDate
+        ? getISODateTime(filters.toDate.split(' ')[0], 'end') // Extract YYYY-MM-DD from appliedFilters
+        : undefined;
+
       const payload = {
-        fromDate: filters.fromDate,
-        toDate: filters.toDate,
-        // Send only the current labName in a list to the existing API
+        fromDate: fromDateTime, // Now in YYYY-MM-DDTHH:MM:SS.sss format
+        toDate: toDateTime,     // Now in YYYY-MM-DDTHH:MM:SS.sss format
         labs: [labName],
       };
 
+      // NOTE: getPendingParametersQA is an API call, ensure it's defined and works
       const response = await getPendingParametersQA(payload);
       setParameters(Array.isArray(response) ? response : []);
     } catch (error) {
@@ -457,15 +702,8 @@ const LabGroup = ({ labName, parameterCount, filters }) => {
     } finally {
       setIsLoading(false);
     }
-  }, [
-    isExpanded,
-    labName,
-    filters.fromDate,
-    filters.toDate,
-    parameters.length,
-  ]);
+  }, [isExpanded, labName, filters.fromDate, filters.toDate, parameters.length]);
 
-  // Effect to fetch data when expanded state changes AND we don't have data
   useEffect(() => {
     if (isExpanded && parameters.length === 0) {
       fetchDetailedParameters();
@@ -476,59 +714,40 @@ const LabGroup = ({ labName, parameterCount, filters }) => {
     setIsExpanded((prev) => !prev);
   };
 
-  // Memoize parameters and loading state
+  const aggregatedData = useMemo(() => {
+    return aggregateByRegistration(parameters);
+  }, [parameters]);
+
+  const registrationCount = aggregatedData.length;
+
   const content = useMemo(() => {
     if (isLoading && isExpanded) {
       return <DetailedLoader labName={labName} />;
     }
 
-    if (isExpanded && parameters.length > 0) {
+    if (isExpanded && aggregatedData.length > 0) {
       return (
         <>
-          <div className="border-t border-gray-100 hidden lg:block">
-            <ParametersTable parameters={parameters} />
+          {/* Desktop View */}
+          <div className="hidden lg:block p-6">
+            <RegistrationTable registrations={aggregatedData} />
           </div>
-          {/* Mobile View for Parameters - Simplified for efficiency */}
-          <div className="lg:hidden p-4 space-y-3 bg-gray-50 border-t border-gray-100">
-            {parameters.map((param, i) => (
-              <div
-                key={i}
-                className="bg-white p-3 rounded-lg shadow-sm border border-gray-200"
-              >
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded font-medium">
-                    Reg. No: {param.registrationNo}
-                  </span>
-                  <span className="inline-flex items-center gap-1 text-xs font-bold bg-red-50 text-red-700 border border-red-200 px-2 py-0.5 rounded-full">
-                    <Clock className="w-3 h-3 flex-shrink-0" />
-                    TAT: {formatDate(param.tatDate)}
-                  </span>
-                </div>
-                <div className="text-sm text-blue-700 font-medium mb-1">
-                  {param.parameter}
-                </div>
-                <div className="text-xs text-gray-500 mb-2">
-                  Sample: {param.sampleName}
-                </div>
-                <div className="flex justify-between text-xs text-gray-500 border-t border-gray-100 pt-2">
-                  <span>Reg: {formatDate(param.registrationDate)}</span>
-                  <span className="text-green-700 font-medium">
-                    Comp: {formatDate(param.analysisCompletionDateTime)}
-                  </span>
-                </div>
-              </div>
+          
+          {/* Mobile View */}
+          <div className="lg:hidden p-4 space-y-3 bg-gray-50">
+            {aggregatedData.map((registration, i) => (
+              <MobileRegistrationCard
+                key={registration.registrationNo}
+                registration={registration}
+                index={i}
+              />
             ))}
           </div>
         </>
       );
     }
 
-    if (
-      isExpanded &&
-      parameterCount > 0 &&
-      parameters.length === 0 &&
-      !isLoading
-    ) {
+    if (isExpanded && parameterCount > 0 && aggregatedData.length === 0 && !isLoading) {
       return (
         <div className="flex justify-center items-center py-8">
           <AlertCircle className="w-5 h-5 text-orange-500 mr-3" />
@@ -540,37 +759,37 @@ const LabGroup = ({ labName, parameterCount, filters }) => {
     }
 
     return null;
-  }, [isLoading, isExpanded, parameters, parameterCount, labName]);
+  }, [isLoading, isExpanded, aggregatedData, parameterCount, labName]);
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden mb-4"
+      className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden"
     >
-      {/* Lab Header - Blue Gradient */}
+      {/* Lab Header */}
       <div
         onClick={handleToggle}
-        className={`px-6 py-4 cursor-pointer transition-colors duration-200 flex items-center justify-between
-          bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700`}
+        className="px-6 py-4 cursor-pointer transition-all duration-200 flex items-center justify-between bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700"
       >
         <div className="flex items-center gap-4">
           <div className="p-2 rounded-lg bg-white/20 backdrop-blur-sm text-white shadow-inner">
             <Microscope className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-base font-bold text-white">
+            <h3 className="text-xl font-bold text-white tracking-tight">
               {labName || "Unknown Lab"}
             </h3>
             <p className="text-xs text-blue-100 mt-0.5">
-              Click to view {parameterCount} pending details
+              {registrationCount > 0 && isExpanded
+                ? `${registrationCount} registration${registrationCount !== 1 ? 's' : ''} • ${parameterCount} parameter${parameterCount !== 1 ? 's' : ''}`
+                : `Click to view pending registrations and associate parameters.`
+              }
             </p>
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <span className="px-4 py-1 rounded-full bg-white text-blue-700 text-sm font-bold shadow-lg min-w-[40px] text-center">
-            {parameterCount}
-          </span>
+
           <motion.div
             animate={{ rotate: isExpanded ? 180 : 0 }}
             transition={{ duration: 0.2 }}
@@ -579,7 +798,8 @@ const LabGroup = ({ labName, parameterCount, filters }) => {
           </motion.div>
         </div>
       </div>
-
+      
+      {/* Expanded Content Section */}
       <AnimatePresence>
         {isExpanded && (
           <motion.div
@@ -610,9 +830,13 @@ export default function QAAnalysis({ username, designation }) {
   const [overviewData, setOverviewData] = useState([]);
   const [isLoadingOverview, setIsLoadingOverview] = useState(false);
   const [isFetchingLabs, setIsFetchingLabs] = useState(true);
-
-  // State to hold the most recently applied filters for the child components to use
-  const [appliedFilters, setAppliedFilters] = useState(filters);
+  
+  // appliedFilters will store the actual ISO string sent to the API
+  const [appliedFilters, setAppliedFilters] = useState({
+    fromDate: getISODateTime(new Date().toISOString().split("T")[0], 'start'),
+    toDate: getISODateTime(new Date().toISOString().split("T")[0], 'end'),
+    selectedLabs: [],
+  });
 
   // Fetch Lab Names on Mount
   useEffect(() => {
@@ -623,7 +847,6 @@ export default function QAAnalysis({ username, designation }) {
         let formattedLabs = [];
         if (Array.isArray(response)) {
           formattedLabs = response.map((lab) => {
-            // Assume lab is {name: string, id: string} or just a string
             if (typeof lab === "string") return { value: lab, label: lab };
             return { value: lab.name || lab.id, label: lab.name || lab.label };
           });
@@ -638,22 +861,35 @@ export default function QAAnalysis({ username, designation }) {
     fetchLabs();
   }, []);
 
-  // Fetch Overview Data (Memoized function)
+  // Fetch Overview Data
   const fetchOverviewData = useCallback(async (filtersToApply) => {
     setIsLoadingOverview(true);
-    setAppliedFilters(filtersToApply); // Update applied filters state before fetch
+    
+    // 1. Convert the YYYY-MM-DD format from the picker into ISO 8601 DateTime (FIXED)
+    const fromDateTimeISO = filtersToApply.fromDate 
+      ? getISODateTime(filtersToApply.fromDate, 'start') 
+      : undefined;
+    const toDateTimeISO = filtersToApply.toDate 
+      ? getISODateTime(filtersToApply.toDate, 'end') 
+      : undefined;
+    
+    // 2. Update appliedFilters state to reflect the actual ISO strings sent
+    setAppliedFilters({ 
+        ...filtersToApply,
+        fromDate: fromDateTimeISO, // Store the ISO string
+        toDate: toDateTimeISO      // Store the ISO string
+    });
 
     try {
       const payload = {
-        fromDate: filtersToApply.fromDate,
-        toDate: filtersToApply.toDate,
+        fromDate: fromDateTimeISO, // Sending correct ISO format
+        toDate: toDateTimeISO,     // Sending correct ISO format
         labs:
           filtersToApply.selectedLabs.length > 0
             ? filtersToApply.selectedLabs
             : undefined,
       };
 
-      // Call the new overview API
       const response = await getPendingParametersOverviewQA(payload);
       setOverviewData(Array.isArray(response) ? response : []);
     } catch (error) {
@@ -664,9 +900,8 @@ export default function QAAnalysis({ username, designation }) {
     }
   }, []);
 
-  // Effect to trigger data fetch whenever the filter state changes (Live Filter)
+  // Effect to trigger data fetch whenever the filter date/lab state changes
   useEffect(() => {
-    // Debounce logic to prevent excessive API calls when quickly changing filters
     const handler = setTimeout(() => {
       fetchOverviewData(filters);
     }, 300);
@@ -676,16 +911,14 @@ export default function QAAnalysis({ username, designation }) {
     };
   }, [filters, fetchOverviewData]);
 
-  // Function to handle reset (will trigger the useEffect above)
+  // Function to handle reset
   const handleClearFilters = () => {
     const today = new Date().toISOString().split("T")[0];
-    // Setting filters here will trigger the useEffect, which calls fetchOverviewData
     setFilters({ fromDate: today, toDate: today, selectedLabs: [] });
   };
 
   // Sorting the overview data by lab name
   const sortedOverviewData = useMemo(() => {
-    // Filter out labs with 0 count if you want a cleaner look, though keeping them is generally better
     return overviewData
       .filter((item) => item.parameterCount > 0)
       .sort((a, b) => a.labName.localeCompare(b.labName));
@@ -716,7 +949,7 @@ export default function QAAnalysis({ username, designation }) {
                 transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
                 className="p-3 rounded-xl bg-white/10 backdrop-blur-sm shadow-lg"
               >
-                <TestTube2 className="w-7 h-7 text-white" />
+                <FaMagnifyingGlass className="w-7 h-7 text-white" />
               </motion.div>
               <div>
                 <div className="flex flex-row gap-4">
@@ -775,13 +1008,17 @@ export default function QAAnalysis({ username, designation }) {
           <NoDataFound />
         ) : (
           <div className="space-y-4">
-            {sortedOverviewData.map((labData, index) => (
+            {sortedOverviewData.map((labData) => (
               <LabGroup
                 key={labData.labName}
                 labName={labData.labName}
                 parameterCount={labData.parameterCount}
-                // Pass the filters currently being displayed/used
-                filters={appliedFilters}
+                // Pass the actual ISO date string from appliedFilters to LabGroup
+                filters={{
+                    ...filters,
+                    fromDate: appliedFilters.fromDate,
+                    toDate: appliedFilters.toDate
+                }}
               />
             ))}
           </div>
