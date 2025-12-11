@@ -12,6 +12,21 @@ import {
   ChevronDown,
 } from "lucide-react";
 
+function formatDate(dateString) {
+  if (!dateString) return "-";
+  try {
+    const date = parseDate(dateString);
+    if (!date || isNaN(date.getTime())) return dateString;
+    return date.toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+  } catch (e) {
+    return dateString;
+  }
+}
+
 // Custom Status Dropdown Component
 const StatusDropdown = ({ selected, onSelect, options }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -429,7 +444,7 @@ export default function InquiryList({ data = [], queryType }) {
                         <td className="px-6 py-4 text-center">
                           <span className="text-sm text-gray-700 font-medium">
                             {inq.inqDate
-                              ? new Date(inq.inqDate).toLocaleDateString()
+                              ? formatDate(new Date(inq.inqDate).toLocaleDateString())
                               : "-"}
                           </span>
                         </td>
@@ -443,7 +458,7 @@ export default function InquiryList({ data = [], queryType }) {
                         <td className="px-6 py-4 text-center">
                           <span className="text-sm text-gray-700 font-medium">
                             {inq.quotDate
-                              ? new Date(inq.quotDate).toLocaleDateString()
+                              ? formatDate(new Date(inq.quotDate).toLocaleDateString())
                               : "-"}
                           </span>
                         </td>
@@ -471,7 +486,7 @@ export default function InquiryList({ data = [], queryType }) {
                     <td className="px-6 py-4 text-center">
                       <span className="text-sm text-gray-700 font-medium">
                         {inq.regisDate
-                          ? new Date(inq.regisDate).toLocaleDateString()
+                          ? formatDate(new Date(inq.regisDate).toLocaleDateString())
                           : "-"}
                       </span>
                     </td>

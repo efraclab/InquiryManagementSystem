@@ -5,7 +5,7 @@ import { Loader2 } from "lucide-react";
 import Login from "./components/LogIn";
 import UnauthorizedScreen from "./components/UnauthorizedScreen";
 
-const ROLE_ADMINISTRATOR = ["Administrator", "Manager", "Business Head", "HOD QA"];
+const ROLE_ADMINISTRATOR = ["Administrator", "Manager", "Management", "HOD QA"];
 
 const isTokenExpired = (token) => {
   try {

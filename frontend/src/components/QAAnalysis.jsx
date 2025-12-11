@@ -22,7 +22,6 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// NOTE: Placeholder API imports - ensure these services are available
 import {
   getLabNames,
   getPendingParametersQA,
@@ -30,16 +29,7 @@ import {
 } from "../services/api";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 
-// --- Helper Functions ---
 
-/**
- * Converts a YYYY-MM-DD date string and a time indicator ('start' or 'end')
- * into a proper ISO 8601 datetime string (YYYY-MM-DDTHH:MM:SS.sssZ).
- * This ensures compatibility with standard APIs expecting a DateTime object.
- * @param {string} dateString - The date in YYYY-MM-DD format from the picker.
- * @param {'start' | 'end'} type - 'start' for 00:00:00.000, 'end' for 23:59:59.999.
- * @returns {string | undefined} - ISO 8601 string or undefined if dateString is falsy.
- */
 function getISODateTime(dateString, type) {
   if (!dateString) return undefined;
   
@@ -50,12 +40,9 @@ function getISODateTime(dateString, type) {
   let month = (date.getMonth() + 1).toString().padStart(2, '0');
   let day = date.getDate().toString().padStart(2, '0');
   
-  // Set time component based on 'start' or 'end'
   if (type === 'start') {
-    // YYYY-MM-DDT00:00:00.000
     return `${year}-${month}-${day}T00:00:00.000`;
   } else if (type === 'end') {
-    // YYYY-MM-DDT23:59:59.999
     return `${year}-${month}-${day}T23:59:59.999`;
   }
   return undefined;
@@ -64,16 +51,13 @@ function getISODateTime(dateString, type) {
 
 function parseDate(dateString) {
   if (!dateString) return null;
-  // Try to handle existing custom formats or standard formats
   const parts = dateString.split(" ");
-  const dateParts = parts[0].split("T")[0].split("-"); // Handle YYYY-MM-DD format
+  const dateParts = parts[0].split("T")[0].split("-");
 
   if (dateParts.length === 3) {
-      // Assuming YYYY-MM-DD format from the custom ISO date string created below
       return new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
   }
   
-  // Fallback for previous formats
   const partsCustom = dateString.split(" ");
   const datePartsCustom = partsCustom[0].split("/");
   if (datePartsCustom.length === 3) {

@@ -192,6 +192,8 @@ const ExcludeToggle = ({ enabled, onChange, disabled = false }) => {
 export default function Filters({ onChange, onResetAll, disabled, queryType }) {
   const today = new Date();
 
+  console.log('queryType', queryType)
+
   const allDataRangeStart = new Date(2025, 3, 1).toISOString().split("T")[0];
   const defaultToDate = today.toISOString().split("T")[0];
 
@@ -211,7 +213,7 @@ export default function Filters({ onChange, onResetAll, disabled, queryType }) {
   const [clientNames, setClientNames] = useState([]);
   const [sortOrder, setSortOrder] = useState("newest");
   const [sortOpen, setSortOpen] = useState(false);
-  const [dateField, setDateField] = useState("inqDate");
+  const [dateField, setDateField] = useState(queryType);
   const [labNames, setLabNames] = useState([]);
 
   const [excludeVerticals, setExcludeVerticals] = useState(false);
@@ -445,7 +447,7 @@ useDebouncedEffect(
         try {
           // Fetch ALL BD names/codes to find the match, ignoring current filters
           // to ensure the locked BD name is always available.
-          const response = await getBdNames({}, { signal: controller.signal });
+          const response = await getBdNames({ dateField: queryType }, { signal: controller.signal });
 
           // Find the BD record matching this BdCode
           const matched = response.find(

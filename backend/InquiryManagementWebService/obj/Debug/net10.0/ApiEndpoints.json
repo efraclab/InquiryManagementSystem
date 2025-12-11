@@ -224,6 +224,78 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "InquiryManagementWebService.Controllers.MasterController",
+    "Method": "GetCommodities",
+    "RelativePath": "api/master/commodities",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "commodityGroupCode",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "InquiryManagementWebService.Controllers.MasterController",
+    "Method": "GetCommodityDetails",
+    "RelativePath": "api/master/commodity-details",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "InquiryManagementWebService.Models.CommodityRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "InquiryManagementWebService.Controllers.MasterController",
+    "Method": "GetCommodityGroups",
+    "RelativePath": "api/master/commodity-groups",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "InquiryManagementWebService.Controllers.MasterController",
+    "Method": "GetLabs",
+    "RelativePath": "api/master/labs",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "InquiryManagementWebService.Controllers.MasterController",
+    "Method": "GetRegulations",
+    "RelativePath": "api/master/regulations",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "InquiryManagementWebService.Controllers.MasterController",
+    "Method": "GetVerticals",
+    "RelativePath": "api/master/verticals",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "InquiryManagementWebService.Controllers.ProjectionController",
     "Method": "GetAssoicateClients",
     "RelativePath": "api/projections/clients/get/{bdCode}",

@@ -17,6 +17,7 @@ import useInquiries from "../hooks/useInquiries";
 import useLabAnalysis from "../hooks/useLabAnalysis";
 import PendingQuotations from "./PendingQuotations";
 import QAAnalysis from "./QAAnalysis";
+import MasterViewer from "./MasterViewer";
 
 const GraphicalAnalysis = React.lazy(() => import("./GraphicalAnalysis"));
 
@@ -38,7 +39,7 @@ export default function Dashboard({
 
   const [view, setView] = useState("list");
   const [subView, setSubView] = useState(null);
-  const [queryType, setQueryType] = useState("inqDate");
+  const [queryType, setQueryType] = username === 'QA' ? useState("qaAnalysis") : useState("inqDate");
   const [showGraph, setShowGraph] = useState(false);
   const [error, setError] = useState(null);
   const [isMinimized, setIsMinimized] = useState(false);
@@ -546,6 +547,7 @@ export default function Dashboard({
               queryType !== "bdPerformanceAnalysis" &&
               queryType !== "pendingQuotations" &&
               queryType !== "qaAnalysis" &&
+              queryType !== "masterAnalysis" &&
               queryType !== "businessAnalysis" && (
                 <Filters
                   onChange={onFiltersChange}
@@ -633,6 +635,10 @@ export default function Dashboard({
                   username={username}
                   designation={designation}
                 />
+              </div>
+            ) : queryType === "masterAnalysis" ? (
+              <div className="max-w-7xl mx-auto px-2 -mt-4 relative">
+                <MasterViewer/>
               </div>
             ) : (
               <>

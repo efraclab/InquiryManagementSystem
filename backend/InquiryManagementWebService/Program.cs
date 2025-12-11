@@ -29,6 +29,7 @@ builder.Services.AddScoped<ILabRepository, LabRepository>();
 builder.Services.AddScoped<IBusinessRepository, BusinessRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IQuotationRepositiry, QuotationRepositiry>();
+builder.Services.AddScoped<IMasterRepository, MasterRepository>();
 builder.Services.AddScoped<JwtService>();
 
 builder.Services.AddCors(options =>

@@ -25,6 +25,7 @@ import {
   MapPin,
   FlaskConical,
   Hash,
+  Activity,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { HiCurrencyRupee } from "react-icons/hi2";
@@ -71,10 +72,17 @@ const AGE_FILTER_OPTIONS = [
   { value: "90+", label: "Last 90+ Days" },
 ];
 
+const STATUS_FILTER_OPTIONS = [
+  { value: "all", label: "All Quotations" },
+  { value: "live", label: "Live Quotations" },
+  { value: "closed", label: "Closed Quotations" },
+];
+
 // Closing Remarks Options
 const CLOSING_REMARKS_OPTIONS = [
   { value: "lost", label: "Lost due to Competition-Price/TAT" },
   { value: "hold", label: "Project on hold/postponed" },
+  { value: "duplicate", label: "Duplicate Quotation" },
 ];
 
 // Components
@@ -386,6 +394,43 @@ const DateRangePicker = ({ fromDate, toDate, onChange }) => {
   );
 };
 
+const StatusFilterChips = ({ statusFilter, onStatusChange }) => {
+  return (
+    <div className="flex flex-wrap gap-2">
+      {STATUS_FILTER_OPTIONS.map((option) => {
+        const isSelected = statusFilter === option.value;
+        
+        let chipStyles = "bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200";
+        let iconColor = "text-gray-500";
+        
+        if (option.value === "live" && isSelected) {
+          chipStyles = "bg-gradient-to-r from-green-500 to-emerald-600 text-white border-green-600 shadow-lg shadow-green-200";
+          iconColor = "text-white";
+        } else if (option.value === "closed" && isSelected) {
+          chipStyles = "bg-gradient-to-r from-red-500 to-rose-600 text-white border-red-600 shadow-lg shadow-red-200";
+          iconColor = "text-white";
+        } else if (option.value === "all" && isSelected) {
+          chipStyles = "bg-gradient-to-r from-blue-500 to-cyan-600 text-white border-blue-600 shadow-lg shadow-blue-200";
+          iconColor = "text-white";
+        }
+        
+        return (
+          <button
+            key={option.value}
+            onClick={() => onStatusChange(option.value)}
+            className={`px-4 py-2 rounded-full border-2 font-semibold text-xs transition-all duration-300 cursor-pointer hover:scale-105 active:scale-95 flex items-center gap-2 ${chipStyles}`}
+          >
+            {option.value === "active" && <Power className={`w-4 h-4 ${iconColor}`} />}
+            {option.value === "closed" && <PowerOff className={`w-4 h-4 ${iconColor}`} />}
+            {option.value === "all" && <Activity className={`w-4 h-4 ${iconColor}`} />}
+            {option.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+};
+
 const FilterPanel = ({
   filters,
   setFilters,
@@ -395,7 +440,7 @@ const FilterPanel = ({
   onClear,
 }) => {
   const [searchInput, setSearchInput] = useState("");
-  const { filterType, fromDate, toDate, ageFilter, selectedBDs, excludeBDs } =
+  const { filterType, fromDate, toDate, ageFilter, selectedBDs, excludeBDs, statusFilter } =
     filters;
 
   const handleBDToggle = (bdCodesList) => {
@@ -418,6 +463,15 @@ const FilterPanel = ({
     setSearchInput("");
   };
 
+  const handleStatusFilterChange = (status) => {
+    setFilters((prev) => ({
+      ...prev,
+      statusFilter: status,
+      quotNo: "",
+    }));
+    setSearchInput("");
+  };
+
   const handleClearFilters = () => {
     const today = new Date().toISOString().split("T")[0];
     setFilters({
@@ -428,6 +482,7 @@ const FilterPanel = ({
       selectedBDs: bdOptions.map((bd) => bd.value),
       excludeBDs: false,
       quotNo: "",
+      statusFilter: "all",
     });
     setSearchInput("");
     if (onClear) onClear();
@@ -615,6 +670,17 @@ const FilterPanel = ({
           </button>
         </div>
       </div>
+
+      {/* Status Filter Chips */}
+      <div className="mt-6">
+        <label className="text-xs font-medium text-gray-600 block mb-2">
+          Quotation Status
+        </label>
+        <StatusFilterChips 
+          statusFilter={statusFilter}
+          onStatusChange={handleStatusFilterChange}
+        />
+      </div>
     </div>
   );
 };
@@ -798,7 +864,7 @@ const StatusToggle = ({ status, quotNo, onToggle, isUpdating }) => {
   return (
     <button
       onClick={(e) => {
-        e.stopPropagation(); // Prevent row expansion when clicking the button
+        e.stopPropagation();
         onToggle(quotNo);
       }}
       disabled={isUpdating || !isLive}
@@ -1525,6 +1591,7 @@ export default function PendingQuotations({
     selectedBDs: [],
     excludeBDs: false,
     quotNo: "",
+    statusFilter: "all",
   });
 
   const [quotations, setQuotations] = useState([]);
@@ -1536,7 +1603,7 @@ export default function PendingQuotations({
   const [currentPage, setCurrentPage] = useState(1);
   const [closingDialogOpen, setClosingDialogOpen] = useState(false);
   const [selectedQuotForClosing, setSelectedQuotForClosing] = useState(null);
-  const itemsPerPage = 20;
+  const itemsPerPage = 50;
 
   const isBdFilterLocked = useMemo(() => !!bdCode, [bdCode]);
   const [displayedUsername, setDisplayedUsername] = useState(username);
@@ -1648,7 +1715,14 @@ export default function PendingQuotations({
         }
       });
 
-      const mappedData = Array.from(aggregatedMap.values());
+      let mappedData = Array.from(aggregatedMap.values());
+
+      // Apply status filter
+      if (filters.statusFilter === "active") {
+        mappedData = mappedData.filter((quot) => quot.isLive === "Y");
+      } else if (filters.statusFilter === "closed") {
+        mappedData = mappedData.filter((quot) => quot.isLive === "N");
+      }
 
       if (filters.quotNo && isBdFilterLocked && mappedData.length > 0) {
         const currentBdOption = bdOptions.find(

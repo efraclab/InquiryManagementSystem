@@ -226,6 +226,7 @@ export async function getVerticals(filters = {}) {
 }
 
 export async function getBdNames(filters = {}) {
+  console.log("bd-names", filters)
   const body = buildRequestBody(filters);
   const response = await axios.post(`${API_BASE_URL}/inquiries/bdnames`, body, {
     headers: { "Content-Type": "application/json" },

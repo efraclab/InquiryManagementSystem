@@ -8,6 +8,7 @@ import {
   TestTube2,
   LogOut,
   AlertTriangle,
+  Database,
 } from "lucide-react";
 import { MdAppRegistration, MdAssignment, MdTrendingUp } from "react-icons/md";
 import { IoAnalytics } from "react-icons/io5";
@@ -69,6 +70,7 @@ export default function SideMenus({
       icon: FaMagnifyingGlass,
     },
     { key: "sampleAnalysis", label: "Sample Analysis", icon: TestTube2 },
+    { key: "masterAnalysis", label: "Master Analysis", icon: Database },
   ].filter(Boolean);
 
   const renderMenuItem = (menu) => (

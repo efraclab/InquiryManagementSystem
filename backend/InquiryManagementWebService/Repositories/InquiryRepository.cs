@@ -32,6 +32,7 @@ namespace InquiryManagementWebService.Repositories
         bd.CODEDESC AS BDName,
         i.QUOTPARTYCD,
         c.CUSTNAME AS ClientName,
+        c.CUSTCITY AS ClientCity,
         i.QUOTSEMPLECHARGE,
         i.QUOTMISC,
         i.QUOTHCC,
@@ -192,6 +193,7 @@ SELECT
     MIN(q.BDName) AS BDName,
     MIN(q.QUOTPARTYCD) AS ClientCode,
     MIN(q.ClientName) AS ClientName,
+    MIN(q.ClientCity) AS ClientCity,
     MIN(q.Vertical) AS Vertical,
 
     mt.MaxTatDate AS TatDate,
@@ -278,26 +280,55 @@ SELECT DISTINCT SUBSTRING(i.QUOTNO, 11, 3) AS Vertical
 FROM OQUOTMST i
 INNER JOIN OCODEMST bd ON bd.CODECD = i.QUOT_SALESPERSONCD
 INNER JOIN OCUSTMST c ON i.QUOTPARTYCD = c.CUSTACCCODE
+LEFT JOIN TRN205 r1 ON r1.TRN2QOTNO = i.QUOTNO
+LEFT JOIN TRN105 r2 ON r2.TRN1REFNO = r1.TRN2REFNO
 WHERE bd.CODETYPE = 'SP'
+
   AND (
       @BDNames IS NULL OR bd.CODEDESC IN (SELECT Value FROM dbo.SplitStrings(@BDNames, ','))
   )
+
   AND (
       @ClientNames IS NULL OR c.CUSTNAME IN (SELECT Value FROM dbo.SplitStrings(@ClientNames, ','))
   )
   AND (
-      (@DateField = 'inqDate' AND (@FromDate IS NULL OR i.QUOTENQDATE >= @FromDate) AND (@ToDate IS NULL OR i.QUOTENQDATE <= @ToDate))
-      OR (@DateField = 'quotDate' AND (@FromDate IS NULL OR i.QuotDate >= @FromDate) AND (@ToDate IS NULL OR i.QuotDate <= @ToDate))
+        (
+            LOWER(@DateField) = 'inqdate'
+            AND (@FromDate IS NULL OR i.QUOTENQDATE >= @FromDate)
+            AND (@ToDate IS NULL OR i.QUOTENQDATE <= @ToDate)
+        )
+        OR
+        (
+            LOWER(@DateField) = 'quotdate'
+            AND (@FromDate IS NULL OR i.QuotDate >= @FromDate)
+            AND (@ToDate IS NULL OR i.QuotDate <= @ToDate)
+        )
+        OR
+        (
+            LOWER(@DateField) = 'regisdate'
+            AND (@FromDate IS NULL OR r2.TRN1DATE >= @FromDate)
+            AND (@ToDate IS NULL OR r2.TRN1DATE <= @ToDate)
+        )
   )
-  AND (@Year IS NULL OR (
-      (@DateField = 'inqDate' AND YEAR(i.QUOTENQDATE) = @Year)
-      OR (@DateField = 'quotDate' AND YEAR(i.QuotDate) = @Year)
-  ))
-  AND (@Month IS NULL OR (
-      (@DateField = 'inqDate' AND MONTH(i.QUOTENQDATE) = @Month)
-      OR (@DateField = 'quotDate' AND MONTH(i.QuotDate) = @Month)
-  ))
+
+  AND (
+      @Year IS NULL OR (
+          (LOWER(@DateField) = 'inqdate'  AND YEAR(i.QUOTENQDATE) = @Year) OR
+          (LOWER(@DateField) = 'quotdate' AND YEAR(i.QuotDate) = @Year) OR
+          (LOWER(@DateField) = 'regisdate' AND YEAR(r2.TRN1DATE) = @Year)
+      )
+  )
+
+  AND (
+      @Month IS NULL OR (
+          (LOWER(@DateField) = 'inqdate'  AND MONTH(i.QUOTENQDATE) = @Month) OR
+          (LOWER(@DateField) = 'quotdate' AND MONTH(i.QuotDate) = @Month) OR
+          (LOWER(@DateField) = 'regisdate' AND MONTH(r2.TRN1DATE) = @Month)
+      )
+  )
+
 ORDER BY Vertical;
+
 ";
 
                 var bdNames = request.BdNames?.Any() == true ? string.Join(",", request.BdNames) : null;
@@ -326,6 +357,8 @@ MAX(bd.CODECD) AS BdCode
 FROM OQUOTMST i
 INNER JOIN OCODEMST bd ON bd.CODECD = i.QUOT_SALESPERSONCD
 INNER JOIN OCUSTMST c ON c.CUSTACCCODE = i.QUOTPARTYCD
+LEFT JOIN TRN205 r1 ON r1.TRN2QOTNO = i.QUOTNO
+LEFT JOIN TRN105 r2 ON r2.TRN1REFNO = r1.TRN2REFNO
 WHERE bd.CODETYPE = 'SP'
   AND (
       @ClientNames IS NULL OR c.CUSTNAME IN (SELECT Value FROM dbo.SplitStrings(@ClientNames, ','))
@@ -334,11 +367,27 @@ WHERE bd.CODETYPE = 'SP'
       @Verticals IS NULL OR SUBSTRING(i.QUOTNO, 11, 3) IN (SELECT Value FROM dbo.SplitStrings(@Verticals, ','))
   )
   AND (
-      (@DateField = 'inqDate' AND (@FromDate IS NULL OR i.QUOTENQDATE >= @FromDate) AND (@ToDate IS NULL OR i.QUOTENQDATE <= @ToDate))
-      OR (@DateField = 'quotDate' AND (@FromDate IS NULL OR i.QuotDate >= @FromDate) AND (@ToDate IS NULL OR i.QuotDate <= @ToDate))
+        (
+            LOWER(@DateField) = 'inqdate'
+            AND (@FromDate IS NULL OR i.QUOTENQDATE >= @FromDate)
+            AND (@ToDate IS NULL OR i.QUOTENQDATE <= @ToDate)
+        )
+        OR
+        (
+            LOWER(@DateField) = 'quotdate'
+            AND (@FromDate IS NULL OR i.QuotDate >= @FromDate)
+            AND (@ToDate IS NULL OR i.QuotDate <= @ToDate)
+        )
+        OR
+        (
+            LOWER(@DateField) = 'regisdate'
+            AND (@FromDate IS NULL OR r2.TRN1DATE >= @FromDate)
+            AND (@ToDate IS NULL OR r2.TRN1DATE <= @ToDate)
+        )
   )
 GROUP BY bd.CODEDESC
 ORDER BY bd.CODEDESC;
+
 ";
 
                 var verticals = request.Verticals?.Any() == true ? string.Join(",", request.Verticals) : null;
@@ -365,6 +414,8 @@ MAX(c.CUSTACCCODE) AS ClientCode
 FROM OQUOTMST i
 INNER JOIN OCUSTMST c ON i.QUOTPARTYCD = c.CUSTACCCODE
 INNER JOIN OCODEMST bd ON bd.CODECD = i.QUOT_SALESPERSONCD
+LEFT JOIN TRN205 r1 ON r1.TRN2QOTNO = i.QUOTNO
+LEFT JOIN TRN105 r2 ON r2.TRN1REFNO = r1.TRN2REFNO
 WHERE bd.CODETYPE = 'SP'
   AND (
       @BDNames IS NULL OR bd.CODEDESC IN (SELECT Value FROM dbo.SplitStrings(@BDNames, ','))
@@ -373,11 +424,27 @@ WHERE bd.CODETYPE = 'SP'
       @Verticals IS NULL OR SUBSTRING(i.QUOTNO, 11, 3) IN (SELECT Value FROM dbo.SplitStrings(@Verticals, ','))
   )
   AND (
-      (@DateField = 'inqDate' AND (@FromDate IS NULL OR i.QUOTENQDATE >= @FromDate) AND (@ToDate IS NULL OR i.QUOTENQDATE <= @ToDate))
-      OR (@DateField = 'quotDate' AND (@FromDate IS NULL OR i.QuotDate >= @FromDate) AND (@ToDate IS NULL OR i.QuotDate <= @ToDate))
+        (
+            LOWER(@DateField) = 'inqdate'
+            AND (@FromDate IS NULL OR i.QUOTENQDATE >= @FromDate)
+            AND (@ToDate IS NULL OR i.QUOTENQDATE <= @ToDate)
+        )
+        OR
+        (
+            LOWER(@DateField) = 'quotdate'
+            AND (@FromDate IS NULL OR i.QuotDate >= @FromDate)
+            AND (@ToDate IS NULL OR i.QuotDate <= @ToDate)
+        )
+        OR
+        (
+            LOWER(@DateField) = 'regisdate'
+            AND (@FromDate IS NULL OR r2.TRN1DATE >= @FromDate)
+            AND (@ToDate IS NULL OR r2.TRN1DATE <= @ToDate)
+        )
   )
 GROUP BY c.CUSTNAME
 ORDER BY c.CUSTNAME;
+
 ";
 
                 var verticals = request.Verticals?.Any() == true ? string.Join(",", request.Verticals) : null;
